@@ -1,0 +1,16 @@
+{
+		"manifest_version": 3,
+		"name": "LeetPush",
+		"version": "1.0",
+		"description": "Effortlessly capture and push LeetCode solutions to your GitHub repository",
+		"background": {
+				"service_worker": "background.js"
+		},
+		"permissions": [
+				"activeTab",
+				"scripting"
+		],
+		"icons": {
+				"16": "images/icon-16.png"
+		}
+}
