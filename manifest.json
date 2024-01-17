@@ -8,11 +8,12 @@
 		},
 		"permissions": [
 				"activeTab",
-				"scripting"
+				"scripting",
+				"storage"
 		],
 		"action": {},
 		"icons": {
-				"16": "images/icon-16.jpeg"
+				"16": "images/icon-16.png"
 		},
 		"host_permissions": [
 				"https://leetcode.com/*"
