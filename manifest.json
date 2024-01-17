@@ -10,7 +10,11 @@
 				"activeTab",
 				"scripting"
 		],
+		"action": {},
 		"icons": {
-				"16": "images/icon-16.png"
-		}
+				"16": "images/icon-16.jpeg"
+		},
+		"host_permissions": [
+				"https://leetcode.com/*"
+		]
 }
