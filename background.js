@@ -2,7 +2,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.status === 'complete') {
         chrome.scripting.executeScript({
             target: {tabId: tabId}, func: () => {
-                let probName, solutionText, fileExtension;
+                let probName, solutionText, fileEx, runtimeText, memoryText;
                 /** Problem Name */
                 const problemNameElement = document.querySelector("div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a");
                 if (problemNameElement) {
@@ -15,9 +15,17 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     solutionText = solutionElement.innerText;
                     sessionStorage.setItem('solutionText', solutionText);
                 }
+                /** Runtime & Memory */
+                const [runtime, memory] = document.querySelectorAll('span.font-semibold.text-sd-green-500');
+                if (runtime && memory) {
+                    runtimeText = runtime.innerText;
+                    memoryText = memory.innerText;
+                    sessionStorage.setItem('runtimeText', runtimeText);
+                    sessionStorage.setItem('memoryText', memoryText);
+                }
                 /** File Extension */
                 const solutionLanguageText = document.querySelector("div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.bg-fill-quaternary.dark\\:bg-fill-quaternary.relative.w-full.overflow-hidden.rounded-lg > div > div.text-caption.px-4.py-2.font-medium.text-text-primary.dark\\:text-text-primary")
-                const fileExtensions = {
+                const fileExs = {
                     "C++": ".cpp",
                     "Java": ".java",
                     "Python": ".py",
@@ -39,24 +47,30 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     "Elixir": ".ex",
                 };
                 if (solutionLanguageText) {
-                    fileExtension = fileExtensions[solutionLanguageText.innerText]
-                    sessionStorage.setItem('fileExtension', fileExtension);
+                    fileEx = fileExs[solutionLanguageText.innerText]
+                    sessionStorage.setItem('fileEx', fileEx);
                 }
             }
         });
     }
 });
+
 chrome.action.onClicked.addListener(tab => {
     chrome.scripting.executeScript({
         target: {tabId: tab.id},
         func: () => {
             const probName = sessionStorage.getItem('probName');
             const solutionText = sessionStorage.getItem('solutionText');
-            const fileExtension = sessionStorage.getItem('fileExtension');
+            const fileEx = sessionStorage.getItem('fileEx');
+            const runtimeText = sessionStorage.getItem('runtimeText')
+            const memoryText = sessionStorage.getItem('memoryText')
+
             if (window.location.href.includes('submissions')) {
                 console.log('We did it')
-                console.log(`${probName}${fileExtension}`)
-                console.log(solutionText)
+                console.log(`file name: ${probName}${fileEx}`)
+                console.log(`solution \n ${solutionText}`)
+                console.log(`runtime: ${runtimeText}`)
+                console.log(`memory: ${memoryText}`)
             }
         }
     })
