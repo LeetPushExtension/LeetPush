@@ -62,10 +62,38 @@ chrome.action.onClicked.addListener(tab => {
             const probName = sessionStorage.getItem('probName');
             const solutionText = sessionStorage.getItem('solutionText');
             const fileEx = sessionStorage.getItem('fileEx');
-            const runtimeText = sessionStorage.getItem('runtimeText')
-            const memoryText = sessionStorage.getItem('memoryText')
+            const runtimeText = sessionStorage.getItem('runtimeText');
+            const memoryText = sessionStorage.getItem('memoryText');
 
-            if (window.location.href.includes('submissions')) {
+            /** Push button, lp -> leetpush */
+            const lpDiv = document.createElement('div')
+            const lpBtn = document.createElement('button')
+            const lpDivStyle = document.createElement('style');
+            lpDiv.id = 'leetpush-div'
+            lpDiv.appendChild(lpBtn)
+            lpBtn.textContent = 'Push'
+            lpDivStyle.textContent = `
+                #leetpush-div {
+                    padding-inline: 1rem;
+                    padding-block: 1rem;
+                    display: flex;
+                    text-align: center;
+                    height: 32px;
+                    align-items: center;
+                    background-color: #e7a41e;
+                    color: #070706;
+                    border-radius: 0.5rem;
+                    margin-left: 0.5rem;
+                    font-weight: 600;
+                }
+            `
+            document.head.appendChild(lpDivStyle)
+
+            const existingLPDiv = document.querySelector('#leetpush-div') /* prevent appending the same element multiple times */
+            if (window.location.href.includes('submissions') && !existingLPDiv) {
+                const btnParent = document.querySelector("#editor > div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)")
+                if (btnParent) btnParent.appendChild(lpDiv)
+
                 console.log('We did it')
                 console.log(`file name: ${probName}${fileEx}`)
                 console.log(`solution \n ${solutionText}`)
