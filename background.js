@@ -4,6 +4,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             target: {tabId: tabId}, func: () => {
                 let probName, probNum, solutionText, fileEx, runtimeText,
                     memoryText, commitMsg;
+
                 /** Problem Name */
                 const problemNameElement = document.querySelector("div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a");
                 if (problemNameElement) {
@@ -12,12 +13,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     sessionStorage.setItem('probName', probName);
                     sessionStorage.setItem('probNum', probNum);
                 }
+
                 /** Solution */
                 const solutionElement = document.querySelector("[class^=\"language-\"]");
                 if (solutionElement) {
                     solutionText = solutionElement.innerText;
                     sessionStorage.setItem('solutionText', solutionText);
                 }
+
                 /** Runtime & Memory */
                 const [runtime, memory] = document.querySelectorAll('span.font-semibold.text-sd-green-500');
                 if (runtime && memory) {
@@ -26,6 +29,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     sessionStorage.setItem('runtimeText', runtimeText);
                     sessionStorage.setItem('memoryText', memoryText);
                 }
+
                 /** File Extension */
                 const solutionLanguageText = document.querySelector("div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.bg-fill-quaternary.dark\\:bg-fill-quaternary.relative.w-full.overflow-hidden.rounded-lg > div > div.text-caption.px-4.py-2.font-medium.text-text-primary.dark\\:text-text-primary")
                 const fileExs = {
@@ -53,6 +57,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     fileEx = fileExs[solutionLanguageText.innerText]
                     sessionStorage.setItem('fileEx', fileEx);
                 }
+
                 /** Extract data from session storage */
                 probName = sessionStorage.getItem('probName');
                 probNum = sessionStorage.getItem('probNum');
@@ -67,21 +72,30 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 const lpBtn = document.createElement('button')
                 const lpDivStyle = document.createElement('style');
                 lpDiv.id = 'leetpush-div'
-                lpDiv.appendChild(lpBtn)
+                lpBtn.id = 'leetpush-btn'
                 lpBtn.textContent = 'Push'
+                lpDiv.appendChild(lpBtn)
                 lpDivStyle.textContent = `
                     #leetpush-div {
-                        padding-inline: 1rem;
-                        padding-block: 1rem;
                         display: flex;
-                        text-align: center;
-                        height: 32px;
                         align-items: center;
+                        text-align: center;
                         background-color: #e7a41e;
-                        color: #070706;
-                        border-radius: 0.5rem;
                         margin-left: 0.5rem;
+                        border-radius: 0.5rem;
+                    }
+                    #leetpush-div:hover {
+                        background-color: #e2b65c;
+                    }
+                    #leetpush-btn {
+                        line-height: 18px;
                         font-weight: 600;
+                        font-size: 13px;
+                        padding-inline: 1.25rem;
+                        padding-block: 0.375rem;
+                        user-select: none;
+                        height: 32px;
+                        color: #070706;
                     }
                 `
                 document.head.appendChild(lpDivStyle)
