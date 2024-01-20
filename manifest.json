@@ -4,8 +4,19 @@
 		"version": "1.0",
 		"description": "Effortlessly capture and push LeetCode solutions to your GitHub repository",
 		"background": {
-				"service_worker": "background.js"
+				"service_worker": "background.js",
+				"css": "style.css"
 		},
+		"content_scripts": [
+				{
+						"matches": [
+								"https://*.leetcode.com/*"
+						],
+						"css": [
+								"style.css"
+						]
+				}
+		],
 		"permissions": [
 				"activeTab",
 				"scripting",
