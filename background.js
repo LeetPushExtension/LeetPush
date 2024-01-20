@@ -3,7 +3,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         chrome.scripting.executeScript({
             target: {tabId: tabId}, func: () => {
                 let probName, probNum, solutionText, fileEx, runtimeText,
-                    memoryText, commitMsg;
+                    memoryText;
 
                 /** Problem Name */
                 const problemNameElement = document.querySelector("div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a");
@@ -57,15 +57,23 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     fileEx = fileExs[solutionLanguageText.innerText]
                     sessionStorage.setItem('fileEx', fileEx);
                 }
+            }
+        });
+    }
+});
 
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+        chrome.scripting.executeScript({
+            target: {tabId: tabId}, func: () => {
                 /** Extract data from session storage */
-                probName = sessionStorage.getItem('probName');
-                probNum = sessionStorage.getItem('probNum');
-                solutionText = sessionStorage.getItem('solutionText');
-                fileEx = sessionStorage.getItem('fileEx');
-                runtimeText = sessionStorage.getItem('runtimeText');
-                memoryText = sessionStorage.getItem('memoryText');
-                commitMsg = `[${probNum}] [Runtime Beats ${runtimeText}] [Memory Beats ${memoryText}]` // TODO: bug
+                const probName = sessionStorage.getItem('probName');
+                const probNum = sessionStorage.getItem('probNum');
+                const solutionText = sessionStorage.getItem('solutionText');
+                const fileEx = sessionStorage.getItem('fileEx');
+                const runtimeText = sessionStorage.getItem('runtimeText');
+                const memoryText = sessionStorage.getItem('memoryText');
+                const commitMsg = `[${probNum}] [Runtime Beats ${runtimeText}] [Memory Beats ${memoryText}]`
 
                 /** Push button, lp -> leetpush */
                 const lpDiv = document.createElement('div')
@@ -98,17 +106,21 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                         color: #070706;
                     }
                 `
-                document.head.appendChild(lpDivStyle)
-                const existingLPDiv = document.querySelector('#leetpush-div') /* prevent appending the same element multiple times */
-                if (window.location.href.includes('submissions') && !existingLPDiv) {
+
+                /** Prevent appending the btn multiple times */
+                const existingLPDiv = document.querySelector('#leetpush-div');
+                /** Append the btn only on the accepted submission */
+                const accepted = document.querySelector("div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.flex.w-full.items-center.justify-between.gap-4 > div.flex.flex-1.flex-col.items-start.gap-1.overflow-hidden > div.text-green-s.dark\\:text-dark-green-s.flex.flex-1.items-center.gap-2.text-\\[16px\\].font-medium.leading-6 > span")
+
+                document.head.appendChild(lpDivStyle);
+                if (window.location.href.includes('submissions') && !existingLPDiv && accepted) {
                     const btnParent = document.querySelector("#editor > div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)")
                     if (btnParent) btnParent.appendChild(lpDiv)
-                    console.log('We did it')
                     console.log(`file name: ${probName}${fileEx}`)
                     console.log(`solution \n ${solutionText}`)
                     console.log(commitMsg)
                 }
             }
-        });
+        })
     }
-});
+})
