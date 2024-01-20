@@ -83,29 +83,6 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 lpBtn.id = 'leetpush-btn'
                 lpBtn.textContent = 'Push'
                 lpDiv.appendChild(lpBtn)
-                lpDivStyle.textContent = `
-                    #leetpush-div {
-                        display: flex;
-                        align-items: center;
-                        text-align: center;
-                        background-color: #e7a41e;
-                        margin-left: 0.5rem;
-                        border-radius: 0.5rem;
-                    }
-                    #leetpush-div:hover {
-                        background-color: #e2b65c;
-                    }
-                    #leetpush-btn {
-                        line-height: 18px;
-                        font-weight: 600;
-                        font-size: 13px;
-                        padding-inline: 1.25rem;
-                        padding-block: 0.375rem;
-                        user-select: none;
-                        height: 32px;
-                        color: #070706;
-                    }
-                `
 
                 /** Prevent appending the btn multiple times */
                 const existingLPDiv = document.querySelector('#leetpush-div');
