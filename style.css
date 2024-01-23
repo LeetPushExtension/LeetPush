@@ -1,3 +1,4 @@
+/** LeetPush Button **/
 #leetpush-div {
     display: flex;
     align-items: center;
@@ -20,4 +21,114 @@
     user-select: none;
     height: 32px;
     color: #070706;
+}
+
+#lp-modal {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 999999;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/** LeetPush Modal **/
+
+#lp-modal {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#lp-container {
+    width: 300px;
+    height: 410px;
+    background-color: #434343;
+    border-radius: 1rem;
+    padding-inline: 2rem;
+    padding-block: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h3 {
+        color: white;
+        text-align: center;
+        font-size: 24px;
+
+        span {
+            color: #e7a41e;
+        }
+    }
+
+    #lp-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.3rem;
+
+        .lp-div {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            input {
+                width: 100%;
+                border-radius: 0.2rem;
+                padding-inline: 0.5rem;
+                padding-block: 0.2rem;
+                margin: 0;
+                border: none;
+                outline: none;
+                background-color: white;
+                font-family: inherit;
+                font-size: inherit;
+                color: black;
+                box-sizing: border-box;
+            }
+        }
+
+        .lp-div:nth-child(2) {
+            label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                a {
+                    font-size: 10px;
+                    text-decoration: underline;
+                }
+            }
+        }
+
+        #lp-radios {
+            display: flex;
+            justify-content: space-evenly;
+
+            .radio-div {
+                display: flex;
+                gap: 0.5rem;
+            }
+        }
+
+        #lp-submit-btn {
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            background-color: #e7a41e;
+            border-radius: 0.5rem;
+            line-height: 18px;
+            font-weight: 600;
+            font-size: 13px;
+            padding-inline: 1.25rem;
+            padding-block: 0.375rem;
+            user-select: none;
+            height: 32px;
+            color: #070706;
+        }
+
+        #lp-submit-btn:hover {
+            background-color: #e2b65c;
+        }
+    }
 }
