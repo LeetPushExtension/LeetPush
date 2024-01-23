@@ -2,10 +2,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
-      func: () => {
+      func: async () => {
         let probName, probNum, solutionText, fileEx, runtimeText, memoryText;
 
-        /** Problem Name */
         const problemNameElement = document.querySelector(
           'div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a'
         );
@@ -14,58 +13,55 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           probName = problemNameElement.innerText
             .replace('.', '')
             .replaceAll(' ', '-');
-          sessionStorage.setItem('probName', probName);
-          sessionStorage.setItem('probNum', probNum);
+          await sessionStorage.setItem('probName', probName);
+          await sessionStorage.setItem('probNum', probNum);
         }
 
-        /** Solution */
         const solutionElement = document.querySelector('[class^="language-"]');
         if (solutionElement) {
           solutionText = solutionElement.innerText;
-          sessionStorage.setItem('solutionText', solutionText);
+          await sessionStorage.setItem('solutionText', solutionText);
         }
 
-        /** Runtime & Memory */
         const [runtime, memory] = document.querySelectorAll(
           'span.font-semibold.text-sd-green-500'
         );
         if (runtime && memory) {
           runtimeText = runtime.innerText;
           memoryText = memory.innerText;
-          sessionStorage.setItem('runtimeText', runtimeText);
-          sessionStorage.setItem('memoryText', memoryText);
+          await sessionStorage.setItem('runtimeText', runtimeText);
+          await sessionStorage.setItem('memoryText', memoryText);
         }
 
-        /** File Extension */
         const solutionLanguageText = document.querySelector(
-          'div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.bg-fill-quaternary.dark\\:bg-fill-quaternary.relative.w-full.overflow-hidden.rounded-lg > div > div.text-caption.px-4.py-2.font-medium.text-text-primary.dark\\:text-text-primary'
-        );
+          'div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
+        ).lastChild.nodeValue;
         const fileExs = {
           'C++': '.cpp',
-          Java: '.java',
-          Python: '.py',
-          Python3: '.py',
-          C: '.c',
+          'Java': '.java',
+          'Python': '.py',
+          'Python3': '.py',
+          'C': '.c',
           'C#': '.cs',
-          JavaScript: '.js',
-          TypeScript: '.ts',
-          PHP: '.php',
-          Swift: '.swift',
-          Kotlin: '.kt',
-          Dart: '.dart',
-          Go: '.go',
-          Ruby: '.rb',
-          Scala: '.scala',
-          Rust: '.rs',
-          Racket: '.rkt',
-          Erlang: '.erl',
-          Elixir: '.ex',
+          'JavaScript': '.js',
+          'TypeScript': '.ts',
+          'PHP': '.php',
+          'Swift': '.swift',
+          'Kotlin': '.kt',
+          'Dart': '.dart',
+          'Go': '.go',
+          'Ruby': '.rb',
+          'Scala': '.scala',
+          'Rust': '.rs',
+          'Racket': '.rkt',
+          'Erlang': '.erl',
+          'Elixir': '.ex'
         };
         if (solutionLanguageText) {
-          fileEx = fileExs[solutionLanguageText.innerText];
-          sessionStorage.setItem('fileEx', fileEx);
+          fileEx = fileExs[solutionLanguageText];
+          await sessionStorage.setItem('fileEx', fileEx);
         }
-      },
+      }
     });
   }
 });
@@ -75,7 +71,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       func: (tab) => {
-        /** Extract data from session storage */
         const probName = sessionStorage.getItem('probName');
         const probNum = sessionStorage.getItem('probNum');
         const solutionText = sessionStorage.getItem('solutionText');
@@ -85,7 +80,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const memoryText = sessionStorage.getItem('memoryText');
         const commitMsg = `[${probNum}] [Runtime Beats ${runtimeText}] [Memory Beats ${memoryText}]`;
 
-        /** Push button, lp -> leetpush */
         const lpDiv = document.createElement('div');
         const lpBtn = document.createElement('button');
         const lpDivStyle = document.createElement('style');
@@ -95,14 +89,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         lpBtn.addEventListener('click', () => pushOnClick());
         lpDiv.appendChild(lpBtn);
 
-        /** Prevent appending the btn multiple times */
         const existingLPDiv = document.querySelector('#leetpush-div');
-        /** Append the btn only on the accepted submission */
         const accepted = document.querySelector(
           'div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.flex.w-full.items-center.justify-between.gap-4 > div.flex.flex-1.flex-col.items-start.gap-1.overflow-hidden > div.text-green-s.dark\\:text-dark-green-s.flex.flex-1.items-center.gap-2.text-\\[16px\\].font-medium.leading-6 > span'
         );
 
-        /** Create the modal div */
         const modalDiv = document.createElement('div');
         modalDiv.id = 'lp-modal';
         const containerDiv = document.createElement('div');
@@ -180,7 +171,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         containerDiv.appendChild(form);
         modalDiv.appendChild(containerDiv);
 
-        /** Get the data from the form */
         submitBtn.addEventListener('click', (event) => {
           event.preventDefault();
 
@@ -207,9 +197,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             '#editor > div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)'
           );
           if (btnParent) btnParent.appendChild(lpDiv);
-          console.log(fileName);
-          console.log(solutionText);
-          console.log(commitMsg);
 
           function pushToGithub(
             userName,
@@ -226,13 +213,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`
               },
               body: JSON.stringify({
                 message: commitMsg,
                 content: btoa(content),
-                branch: branch,
-              }),
+                branch: branch
+              })
             })
               .then((response) => {
                 if (response.status === 401) {
@@ -249,9 +236,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 return response.json();
               })
               .then((fileResponse) => {
+                // TODO Loading
                 console.log('Successfully pushed to Github!');
               })
               .catch((error) => {
+                // TODO X letter
                 console.log(error.message);
               });
           }
@@ -288,7 +277,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             );
           }
         }
-      },
+      }
     });
   }
 });
