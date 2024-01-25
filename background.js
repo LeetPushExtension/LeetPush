@@ -121,7 +121,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const tokenLabel = document.createElement('label');
         const howToCreateToken = document.createElement('a');
         howToCreateToken.textContent = 'Generate Token?';
-        //! howToCreateToken.href = 'https://www.google.com/'; TODO: README section link
+        howToCreateToken.href = 'https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig';
         howToCreateToken.setAttribute('target', '_blank');
         tokenLabel.textContent = 'Token:';
         tokenLabel.appendChild(howToCreateToken);
