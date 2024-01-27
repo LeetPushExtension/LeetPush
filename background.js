@@ -1,41 +1,10 @@
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === 'complete') {
     chrome.scripting.executeScript({
       target: { tabId: tabId },
       func: async () => {
-        let probName, probNum, solutionText, fileEx, runtimeText, memoryText;
-
-        const problemNameElement = document.querySelector(
-          'div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a'
-        );
-        if (problemNameElement) {
-          probNum = problemNameElement.innerText.split('.')[0];
-          probName = problemNameElement.innerText
-            .replace('.', '')
-            .replaceAll(' ', '-');
-          await sessionStorage.setItem('probName', probName);
-          await sessionStorage.setItem('probNum', probNum);
-        }
-
-        const solutionElement = document.querySelector('[class^="language-"]');
-        if (solutionElement) {
-          solutionText = solutionElement.innerText;
-          await sessionStorage.setItem('solutionText', solutionText);
-        }
-
-        const [runtime, memory] = document.querySelectorAll(
-          'span.font-semibold.text-sd-green-500'
-        );
-        if (runtime && memory) {
-          runtimeText = runtime.innerText;
-          memoryText = memory.innerText;
-          await sessionStorage.setItem('runtimeText', runtimeText);
-          await sessionStorage.setItem('memoryText', memoryText);
-        }
-
-        const solutionLanguageText = document.querySelector(
-          'div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
-        ).lastChild.nodeValue;
+        let probNameElement, probName, probNum, solution, formattedSolution,
+          fileEx, runtimeText, memoryText, commitMsg, fileName;
         const fileExs = {
           'C++': '.cpp',
           'Java': '.java',
@@ -57,29 +26,52 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
           'Erlang': '.erl',
           'Elixir': '.ex'
         };
-        if (solutionLanguageText) {
-          fileEx = fileExs[solutionLanguageText];
-          await sessionStorage.setItem('fileEx', fileEx);
+
+        /** get the problem title */
+        probNameElement = document.querySelector(
+          'div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a'
+        );
+        probNum = probNameElement.innerText.split('.')[0];
+        probName = probNameElement.innerText
+          .replace('.', '')
+          .replaceAll(' ', '-');
+
+        if (window.location.href.includes('submissions')) {
+          /** get the solution & solution lang */
+          const solutionLangText = document.querySelector(
+            'div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
+          ).lastChild.nodeValue;
+          for (const key in localStorage) {
+            if (key.startsWith(`${probNum}_`) && key.endsWith(solutionLangText.toLowerCase())) {
+              solution = localStorage.getItem(key);
+              formattedSolution = solution
+                .replace(/\\n/g, '\n')
+                .replace(/  /g, '  ')
+                .replace(/"/g, '');
+              await sessionStorage.setItem('solution', formattedSolution);
+            }
+          }
+          if (solutionLangText) {
+            fileEx = fileExs[solutionLangText];
+          }
+          fileName = `${probName}${fileEx}`;
+          await sessionStorage.setItem('fileName', fileName);
+
+          /** get runtime & memory */
+          const [runtime, memory] = document.querySelectorAll(
+            'span.font-semibold.text-sd-green-500'
+          );
+          if (runtime && memory) {
+            runtimeText = runtime.innerText;
+            memoryText = memory.innerText;
+          }
+
+          /** generate commit msg */
+          commitMsg = `[${probNum}] [Time Beats ${runtimeText}] [Memory Beats ${memoryText}]`;
+          await sessionStorage.setItem('commitMsg', commitMsg);
         }
-      }
-    });
-  }
-});
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete') {
-    chrome.scripting.executeScript({
-      target: { tabId: tabId },
-      func: (tab) => {
-        const probName = sessionStorage.getItem('probName');
-        const probNum = sessionStorage.getItem('probNum');
-        const solutionText = sessionStorage.getItem('solutionText');
-        const fileEx = sessionStorage.getItem('fileEx');
-        const fileName = `${probName}${fileEx}`;
-        const runtimeText = sessionStorage.getItem('runtimeText');
-        const memoryText = sessionStorage.getItem('memoryText');
-        const commitMsg = `[${probNum}] [Runtime Beats ${runtimeText}] [Memory Beats ${memoryText}]`;
-
+        /** create push btn */
         const lpDiv = document.createElement('div');
         const lpBtn = document.createElement('button');
         const lpDivStyle = document.createElement('style');
@@ -88,12 +80,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         lpBtn.textContent = 'Push';
         lpBtn.addEventListener('click', () => pushOnClick());
         lpDiv.appendChild(lpBtn);
+        document.head.appendChild(lpDivStyle);
 
-        const existingLPDiv = document.querySelector('#leetpush-div');
         const accepted = document.querySelector(
           'div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.flex.w-full.items-center.justify-between.gap-4 > div.flex.flex-1.flex-col.items-start.gap-1.overflow-hidden > div.text-green-s.dark\\:text-dark-green-s.flex.flex-1.items-center.gap-2.text-\\[16px\\].font-medium.leading-6 > span'
         );
+        const submissionsPage = window.location.href.includes('submissions');
+        const existingLPDiv = document.querySelector('#leetpush-div');
+        /** check if the sumbission is accepted or not */
+        if (submissionsPage && !existingLPDiv && accepted) {
+          const btnParent = document.querySelector(
+            'div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)'
+          );
+          if (btnParent) btnParent.appendChild(lpDiv);
+        }
 
+        /** Modal div */
         const modalDiv = document.createElement('div');
         modalDiv.id = 'lp-modal';
         const containerDiv = document.createElement('div');
@@ -187,29 +189,73 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           document.body.removeChild(modalDiv);
         });
 
-        document.head.appendChild(lpDivStyle);
-        if (
-          window.location.href.includes('submissions') &&
-          !existingLPDiv &&
-          accepted
+        /** push to GitHub */
+        async function pushOnClick() {
+          console.log('Pushing to Github...');
+          const token = localStorage.getItem('token');
+          const repo = localStorage.getItem('repo');
+          const branch = localStorage.getItem('branch');
+          if (!token || !repo || !branch) {
+            document.body.appendChild(modalDiv);
+            if (token) document.querySelector('#token').value = token;
+            if (repo) document.querySelector('#repo-url').value = repo;
+            if (branch) document.querySelector(`#branch-${branch}`).checked = true;
+            return;
+          }
+
+          const [repoName, userName] = repo.split('/').slice(3, 5);
+
+          setTimeout(() => {
+            pushToGithub(
+              repoName,
+              userName,
+              branch,
+              sessionStorage.getItem('fileName'),
+              sessionStorage.getItem('solution'),
+              sessionStorage.getItem('commitMsg'),
+              token
+            );
+          }, 1000);
+        }
+
+        async function pushToGithub(
+          userName,
+          repoName,
+          branch,
+          fileName,
+          content,
+          commitMsg,
+          token
         ) {
-          const btnParent = document.querySelector(
-            '#editor > div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)'
-          );
-          if (btnParent) btnParent.appendChild(lpDiv);
+          const fileExistsResponse = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}?ref=${branch}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
 
-          function pushToGithub(
-            userName,
-            repoName,
-            branch,
-            fileName,
-            content,
-            commitMsg,
-            token
-          ) {
+          if (fileExistsResponse.ok) {
             const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}`;
+            const updateResponse = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                message: commitMsg,
+                content: btoa(content),
+                sha: (await fileExistsResponse.json()).sha
+              })
+            });
 
-            fetch(apiUrl, {
+            if (!updateResponse.ok) {
+              console.error(`Error updating file: ${await updateResponse.json().message}`);
+            }
+
+            console.log('File content updated successfully!');
+          } else {
+            // File doesn't exist, create a new file
+            const createResponse = await fetch(apiUrl, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -220,61 +266,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 content: btoa(content),
                 branch: branch
               })
-            })
-              .then((response) => {
-                if (response.status === 401) {
-                  throw new Error('Token is invalid!');
-                } else if (response.status === 404) {
-                  throw new Error('Repo, UserName or Branch NOT FOUND!');
-                } else if (response.status === 422) {
-                  throw new Error('File already exists!');
-                } else if (response.status === 500) {
-                  throw new Error('Internal Server Error!');
-                } else if (!response.ok) {
-                  throw new Error(`Something went wrong! ${response.status}`);
-                }
-                return response.json();
-              })
-              .then((fileResponse) => {
-                // TODO Loading
-                console.log('Successfully pushed to Github!');
-              })
-              .catch((error) => {
-                // TODO X letter
-                console.log(error.message);
-              });
-          }
+            });
 
-          function pushOnClick() {
-            console.log('Pushing to Github...');
-            const token = localStorage.getItem('token');
-            const repo = localStorage.getItem('repo');
-            const branch = localStorage.getItem('branch');
-            if (!token || !repo || !branch) {
-              document.body.appendChild(modalDiv);
-              if (token) {
-                document.querySelector('#token').value = token;
-              }
-              if (repo) {
-                document.querySelector('#repo-url').value = repo;
-              }
-              if (branch) {
-                document.querySelector(`#branch-${branch}`).checked = true;
-              }
-              return;
+            if (!createResponse.ok) {
+              console.error(`Error creating file: ${await createResponse.json().message}`);
             }
 
-            const [repoName, userName] = repo.split('/').slice(3, 5);
-
-            pushToGithub(
-              repoName,
-              userName,
-              branch,
-              `${probName}${fileEx}`,
-              solutionText,
-              commitMsg,
-              token
-            );
+            console.log('File created successfully!');
           }
         }
       }
