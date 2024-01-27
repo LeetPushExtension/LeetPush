@@ -58,16 +58,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           await sessionStorage.setItem('fileName', fileName);
 
           /** get runtime & memory */
-          const [runtime, memory] = document.querySelectorAll(
-            'span.font-semibold.text-sd-green-500'
-          );
+          const [memory, runtime] = document.querySelectorAll("div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold")
           if (runtime && memory) {
             runtimeText = runtime.innerText;
             memoryText = memory.innerText;
           }
 
           /** generate commit msg */
-          commitMsg = `[${probNum}] [Time Beats ${runtimeText}] [Memory Beats ${memoryText}]`;
+          commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}]`;
           await sessionStorage.setItem('commitMsg', commitMsg);
         }
 
@@ -205,17 +203,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
           const [repoName, userName] = repo.split('/').slice(3, 5);
 
-          setTimeout(() => {
-            pushToGithub(
-              repoName,
-              userName,
-              branch,
-              sessionStorage.getItem('fileName'),
-              sessionStorage.getItem('solution'),
-              sessionStorage.getItem('commitMsg'),
-              token
-            );
-          }, 1000);
+          await pushToGithub(
+            repoName,
+            userName,
+            branch,
+            sessionStorage.getItem('fileName'),
+            sessionStorage.getItem('solution'),
+            sessionStorage.getItem('commitMsg'),
+            token
+          );
         }
 
         async function pushToGithub(
@@ -227,6 +223,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           commitMsg,
           token
         ) {
+          const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}`;
+
           const fileExistsResponse = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}?ref=${branch}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -234,7 +232,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           });
 
           if (fileExistsResponse.ok) {
-            const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}`;
             const updateResponse = await fetch(apiUrl, {
               method: 'PUT',
               headers: {
@@ -271,7 +268,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             if (!createResponse.ok) {
               console.error(`Error creating file: ${await createResponse.json().message}`);
             }
-
             console.log('File created successfully!');
           }
         }
