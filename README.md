@@ -1,5 +1,9 @@
 # LeetPush Chrome Extension
 
+<div style="width: 100%; display: flex; justify-content: center">
+	<img alt="logo.jpeg" src="assets/logo.jpeg" width="500"/>
+</div>
+
 ## Stay Focused on Solving, Let _LeetPush_ Handle the Pushing!
 
 ### Features:
@@ -19,8 +23,11 @@
 
 ### Usage:
 
+**_The extension works only on Code Editor layout_**
+
+
 <details>
-    <summary style="font-size: 14px; font-weight: bold">The extension works only on Code Editor layout</summary>
+    <summary style="font-size: 14px; font-weight: bold; color: #dc3545">How to change the layout</summary>
     <img alt="step-1" src="assets/1.png"/>
 		<br>
 		<br>
