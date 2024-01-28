@@ -20,7 +20,7 @@
 ### Usage:
 
 <details>
-    <summary style="font-size: 14px; font-weight: bold">The extesniosn works only on Code Editor Layout</summary>
+    <summary style="font-size: 14px; font-weight: bold">The extension works only on Code Editor layout</summary>
     <img alt="step-1" src="assets/1.png"/>
 		<br>
 		<br>
