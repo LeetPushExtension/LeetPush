@@ -6,25 +6,47 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         let probNameElement, probName, probNum, solution, formattedSolution,
           fileEx, runtimeText, memoryText, commitMsg, fileName;
         const fileExs = {
+          'C': '.c',
           'C++': '.cpp',
+          'C#': '.cs',
+          'Dart': '.dart',
+          'Elixir': '.ex',
+          'Erlang': '.erl',
+          'Go': '.go',
           'Java': '.java',
+          'JavaScript': '.js',
+          'Kotlin': '.kt',
+          'PHP': '.php',
           'Python': '.py',
           'Python3': '.py',
-          'C': '.c',
-          'C#': '.cs',
-          'JavaScript': '.js',
-          'TypeScript': '.ts',
-          'PHP': '.php',
-          'Swift': '.swift',
-          'Kotlin': '.kt',
-          'Dart': '.dart',
-          'Go': '.go',
-          'Ruby': '.rb',
-          'Scala': '.scala',
-          'Rust': '.rs',
           'Racket': '.rkt',
-          'Erlang': '.erl',
-          'Elixir': '.ex'
+          'Ruby': '.rb',
+          'Rust': '.rs',
+          'Scala': '.scala',
+          'Swift': '.swift',
+          'TypeScript': '.ts'
+        };
+
+        const localStorageExs = {
+          'C': 'c',
+          'C++': 'cpp',
+          'C#': 'csharp',
+          'Dart': 'dart',
+          'Elixir': 'elixir',
+          'Erlang': 'erlang',
+          'Go': 'golang',
+          'Java': 'java',
+          'JavaScript': 'javaScript',
+          'Kotlin': 'kotlin',
+          'PHP': 'php',
+          'Python': 'python',
+          'Python3': 'python3',
+          'Racket': 'racket',
+          'Ruby': 'ruby',
+          'Rust': 'rust',
+          'Scala': 'scala',
+          'Swift': 'swift',
+          'TypeScript': 'typeScript'
         };
 
         /** get the problem title */
@@ -42,7 +64,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             'div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
           ).lastChild.nodeValue;
           for (const key in localStorage) {
-            if (key.startsWith(`${probNum}_`) && key.endsWith(solutionLangText.toLowerCase())) {
+            if (key.startsWith(`${probNum}_`) && key.endsWith(localStorageExs[solutionLangText])) {
               solution = localStorage.getItem(key);
               formattedSolution = solution
                 .replace(/\\n/g, '\n')
@@ -65,7 +87,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           }
 
           /** generate commit msg */
-          commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}]`;
+          commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}] - LeetPush`;
           await sessionStorage.setItem('commitMsg', commitMsg);
         }
 
