@@ -58,7 +58,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           await sessionStorage.setItem('fileName', fileName);
 
           /** get runtime & memory */
-          const [memory, runtime] = document.querySelectorAll("div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold")
+          const [memory, runtime] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold');
           if (runtime && memory) {
             runtimeText = runtime.innerText;
             memoryText = memory.innerText;
@@ -250,6 +250,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             }
 
             console.log('File content updated successfully!');
+            lpBtn.textContent = 'Done';
+            setTimeout(() => {
+              lpBtn.textContent = 'Push';
+            }, 5000);
           } else {
             // File doesn't exist, create a new file
             const createResponse = await fetch(apiUrl, {
@@ -268,7 +272,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             if (!createResponse.ok) {
               console.error(`Error creating file: ${await createResponse.json().message}`);
             }
-            console.log('File created successfully!');
+            console.log('File content updated successfully!');
+            lpBtn.textContent = 'Done';
+            setTimeout(() => {
+              lpBtn.textContent = 'Push';
+            }, 5000);
           }
         }
       }
