@@ -203,7 +203,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         });
 
         async function pushOnClick() {
-          console.log('Pushing to Github...');
           const token = localStorage.getItem('token');
           const repo = localStorage.getItem('repo');
           const branch = localStorage.getItem('branch');
