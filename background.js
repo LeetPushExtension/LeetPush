@@ -49,7 +49,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           'TypeScript': 'typeScript'
         };
 
-        /** get the problem title */
         probNameElement = document.querySelector(
           'div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a'
         );
@@ -59,7 +58,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           .replaceAll(' ', '-');
 
         if (window.location.href.includes('submissions')) {
-          /** get the solution & solution lang */
           const solutionLangText = document.querySelector(
             'div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
           ).lastChild.nodeValue;
@@ -79,19 +77,16 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           fileName = `${probName}${fileEx}`;
           await sessionStorage.setItem('fileName', fileName);
 
-          /** get runtime & memory */
           const [memory, runtime] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold');
           if (runtime && memory) {
             runtimeText = runtime.innerText;
             memoryText = memory.innerText;
           }
 
-          /** generate commit msg */
           commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}] - LeetPush`;
           await sessionStorage.setItem('commitMsg', commitMsg);
         }
 
-        /** create push btn */
         const lpDiv = document.createElement('div');
         const lpBtn = document.createElement('button');
         const lpDivStyle = document.createElement('style');
@@ -107,7 +102,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         );
         const submissionsPage = window.location.href.includes('submissions');
         const existingLPDiv = document.querySelector('#leetpush-div');
-        /** check if the sumbission is accepted or not */
         if (submissionsPage && !existingLPDiv && accepted) {
           const btnParent = document.querySelector(
             'div.flex.justify-between.py-1.pl-3.pr-1 > div.relative.flex.overflow-hidden.rounded.bg-fill-tertiary.dark\\:bg-fill-tertiary.\\!bg-transparent > div.flex-none.flex > div:nth-child(2)'
@@ -115,7 +109,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           if (btnParent) btnParent.appendChild(lpDiv);
         }
 
-        /** Modal div */
         const modalDiv = document.createElement('div');
         modalDiv.id = 'lp-modal';
         const containerDiv = document.createElement('div');
@@ -209,7 +202,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           document.body.removeChild(modalDiv);
         });
 
-        /** push to GitHub */
         async function pushOnClick() {
           console.log('Pushing to Github...');
           const token = localStorage.getItem('token');
@@ -267,17 +259,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               })
             });
 
-            if (!updateResponse.ok) {
-              console.error(`Error updating file: ${await updateResponse.json().message}`);
-            }
-
-            console.log('File content updated successfully!');
             lpBtn.textContent = 'Done';
             setTimeout(() => {
               lpBtn.textContent = 'Push';
             }, 5000);
           } else {
-            // File doesn't exist, create a new file
             const createResponse = await fetch(apiUrl, {
               method: 'PUT',
               headers: {
@@ -291,10 +277,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               })
             });
 
-            if (!createResponse.ok) {
-              console.error(`Error creating file: ${await createResponse.json().message}`);
-            }
-            console.log('File content updated successfully!');
             lpBtn.textContent = 'Done';
             setTimeout(() => {
               lpBtn.textContent = 'Push';
