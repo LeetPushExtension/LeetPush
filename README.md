@@ -1,7 +1,7 @@
 # LeetPush Chrome Extension
 
 <div style="width: 100%; display: flex; justify-content: center">
-	<img alt="logo.jpeg" src="assets/logo.jpeg" width="500"/>
+	<img alt="logo.jpeg" src="assets/logo.jpeg"/>
 </div>
 
 ## Stay Focused on Solving, Let _LeetPush_ Handle the Pushing!
@@ -27,7 +27,8 @@
 
 
 <details>
-    <summary style="font-size: 14px; font-weight: bold; color: #dc3545">How to change the layout</summary>
+    <summary style="font-size: 14px; font-weight: bold">How to change the layout</summary>
+		<br>
     <img alt="step-1" src="assets/1.png"/>
 		<br>
 		<br>
@@ -39,7 +40,7 @@
 
 **_One-Time Setup:_**
 
-- [Generate a GitHub token with access to only a specific repository](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig).
+- [Generate a GitHub token with access to only repositories](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig).
 - Grant the "repo" scope to allow the extension to push code to your
 	repositories.
 - Access a LeetCode problem and click the "Push" button (located next to the
