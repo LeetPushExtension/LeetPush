@@ -18,7 +18,7 @@
 
 ### Installation:
 
-- Visit [LeetPush Extension]().
+- Visit [LeetPush Extension](https://chromewebstore.google.com/detail/leetpush/gmagfdabfjaipjgdfgddjgongeemkalf).
 - Click "Add to Chrome" to install the extension.
 
 ### Usage:
