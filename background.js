@@ -36,7 +36,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           'Erlang': 'erlang',
           'Go': 'golang',
           'Java': 'java',
-          'JavaScript': 'javaScript',
+          'JavaScript': 'javascript',
           'Kotlin': 'kotlin',
           'PHP': 'php',
           'Python': 'python',
