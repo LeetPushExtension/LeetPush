@@ -212,7 +212,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
           const [repoName, userName] = repo.split('/').slice(3, 5);
 
-          console.log(sessionStorage.getItem('solution'));
+          lpBtn.disabled = true;
+          lpBtn.textContent = 'Loading...';
 
           await pushToGithub(
             repoName,
@@ -223,6 +224,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             sessionStorage.getItem('commitMsg'),
             token
           );
+
+          await sleep(3000);
+          lpBtn.textContent = 'Done';
+          await sleep(2000);
+          lpBtn.disabled = false;
+          lpBtn.textContent = 'Push';
         }
 
         async function pushToGithub(
@@ -235,7 +242,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           token
         ) {
           const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}`;
-
           const fileExistsResponse = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}?ref=${branch}`, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -255,11 +261,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 sha: (await fileExistsResponse.json()).sha
               })
             });
-
-            lpBtn.textContent = 'Done';
-            setTimeout(() => {
-              lpBtn.textContent = 'Push';
-            }, 5000);
           } else {
             const createResponse = await fetch(apiUrl, {
               method: 'PUT',
@@ -273,11 +274,6 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                 branch: branch
               })
             });
-
-            lpBtn.textContent = 'Done';
-            setTimeout(() => {
-              lpBtn.textContent = 'Push';
-            }, 5000);
           }
         }
 
@@ -292,6 +288,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             const code = document.querySelector('div > pre > code').innerText;
             await sessionStorage.setItem('solution', code);
           }
+        }
+
+        function sleep(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
         }
       }
     });
