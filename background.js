@@ -64,13 +64,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           for (const key in localStorage) {
             if (key.startsWith(`${probNum}_`) && key.endsWith(localStorageExs[solutionLangText])) {
               solution = localStorage.getItem(key);
-              formattedSolution = solution
-                .replace(/\\n/g, '\n')
-                .replace(/  /g, '  ')
-                .replace(/"/g, '');
-              await sessionStorage.setItem('solution', formattedSolution);
+              break;
             }
           }
+
+          await checkSolInLocalStorage(solution);
+
           if (solutionLangText) {
             fileEx = fileExs[solutionLangText];
           }
@@ -280,6 +279,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             setTimeout(() => {
               lpBtn.textContent = 'Push';
             }, 5000);
+          }
+        }
+
+        async function checkSolInLocalStorage(sol) {
+          if (sol) {
+            formattedSolution = sol
+              .replace(/\\n/g, '\n')
+              .replace(/  /g, '  ')
+              .replace(/"/g, '');
+            await sessionStorage.setItem('solution', formattedSolution);
+          } else {
+            const code = document.querySelector('div > pre > code').innerText;
+            await sessionStorage.setItem('solution', code);
           }
         }
       }
