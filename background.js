@@ -4,7 +4,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       target: { tabId: tabId },
       func: async () => {
         let probNameElement, probName, probNum, solution, formattedSolution,
-          fileEx, runtimeText, memoryText, commitMsg, fileName;
+          fileEx, runtimeText, memoryText, commitMsg, fileName, solutionsId;
         const fileExs = {
           'C': '.c',
           'C++': '.cpp',
@@ -61,12 +61,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const solutionLangText = document.querySelector(
             'div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.gap-2.pb-2.text-sm.font-medium.text-text-tertiary.dark\\:text-text-tertiary'
           ).lastChild.nodeValue;
-          for (const key in localStorage) {
-            if (key.startsWith(`${probNum}_`) && key.endsWith(localStorageExs[solutionLangText])) {
-              solution = localStorage.getItem(key);
-              break;
-            }
-          }
+
+          solutionsId = localStorage.key(0).split('_')[1];
+          solution = localStorage.getItem(`${probNum}_${solutionsId}_${localStorageExs[solutionLangText]}`);
 
           await checkSolInLocalStorage(solution);
 
@@ -214,6 +211,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           }
 
           const [repoName, userName] = repo.split('/').slice(3, 5);
+
+          console.log(sessionStorage.getItem('solution'));
 
           await pushToGithub(
             repoName,
