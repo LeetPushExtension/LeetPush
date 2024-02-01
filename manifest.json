@@ -17,10 +17,8 @@
 				}
 		],
 		"permissions": [
-				"activeTab",
 				"scripting"
 		],
-		"action": {},
 		"icons": {
 				"16": "images/icon-16.png",
 				"32": "images/icon-32.png",
