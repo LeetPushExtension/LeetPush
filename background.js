@@ -225,7 +225,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             token
           );
 
-          await sleep(3000);
+          await sleep(2000);
           lpBtn.textContent = 'Done';
           await sleep(2000);
           lpBtn.disabled = false;
