@@ -285,7 +285,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               .replace(/"/g, '');
             await sessionStorage.setItem('solution', formattedSolution);
           } else {
-            const code = document.querySelector('div > pre > code').innerText;
+            const code = document.querySelector('div.px-4.py-3 > div > pre > code').innerText;
             await sessionStorage.setItem('solution', code);
           }
         }
