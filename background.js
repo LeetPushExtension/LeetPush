@@ -73,7 +73,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           fileName = `${probName}${fileEx}`;
           await sessionStorage.setItem('fileName', fileName);
 
-          const [memory, runtime] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold');
+          const [runtime, memory] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold');
           if (runtime && memory) {
             runtimeText = runtime.innerText;
             memoryText = memory.innerText;
