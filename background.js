@@ -241,15 +241,23 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           commitMsg,
           token
         ) {
-          const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}`;
-          const fileExistsResponse = await fetch(`https://api.github.com/repos/${userName}/${repoName}/contents/${fileName}?ref=${branch}`, {
+
+          // The folder path includes the problem name
+          const folderPath = fileName.split('.')[0];
+          const filePath = `${folderPath}/${fileName}`; // Construct file path with folder
+          const apiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/${filePath}`;
+        
+          // Check if the file already exists
+          const fileExistsResponse = await fetch(`${apiUrl}?ref=${branch}`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
-
+        
+          let response;
           if (fileExistsResponse.ok) {
-            const updateResponse = await fetch(apiUrl, {
+            // If file exists, update it
+            response = await fetch(apiUrl, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -258,11 +266,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               body: JSON.stringify({
                 message: commitMsg,
                 content: btoa(content),
-                sha: (await fileExistsResponse.json()).sha
+                sha: (await fileExistsResponse.json()).sha,
+                branch: branch // Specify branch
               })
             });
           } else {
-            const createResponse = await fetch(apiUrl, {
+            // If file does not exist, create it
+            response = await fetch(apiUrl, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json',
@@ -275,8 +285,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               })
             });
           }
+        
+          // Handle the response from GitHub API (optional)
+          if (response.ok) {
+            console.log('Success:', await response.json());
+          } else {
+            console.error('Error:', await response.json());
+          }
         }
-
+        
         async function checkSolInLocalStorage(sol) {
           if (sol) {
             formattedSolution = sol
