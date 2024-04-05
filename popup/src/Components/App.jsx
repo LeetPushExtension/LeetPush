@@ -3,6 +3,7 @@ import LeetCode from "./LeetCode.jsx";
 import Icons from "./Icons.jsx";
 import Logo from "./Logo.jsx";
 import Form from "./Form.jsx";
+import Footer from "./Footer.jsx";
 
 export default function App() {
   const [leetCodeID, setLeetCodeID] = useLocalStorage(null, "lpLeetCodeID");
@@ -18,6 +19,8 @@ export default function App() {
         <LeetCode setLeetCodeID={setLeetCodeID}
                   leetCodeID={leetCodeID} />
       )}
+
+      <Footer />
     </div>
   );
 }

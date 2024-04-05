@@ -21,7 +21,7 @@ export default function Form({ setLeetCodeID, type }) {
   }
 
   return (
-    <div className="mb-3">
+    <div className="mb-6">
       <form onSubmit={e => handleSubmit(e)}
             className="w-full flex justify-evenly">
         <input placeholder="LeetCode username"

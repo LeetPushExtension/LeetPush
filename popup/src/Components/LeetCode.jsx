@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import Loader from "./Loader.jsx";
 import NotFound from "./NotFound.jsx";
 import Form from "./Form.jsx";
+import DailyProblem from "./DailyProblem.jsx";
 
 LeetCode.propTypes = {
   leetCodeID: PropTypes.string.isRequired,
@@ -20,6 +21,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
   const [error, setError] = useState(null);
   const [notFound, setNotFound] = useState(null);
   const [updateForm, setUpdateForm] = useState(false);
+  const [reqError, setReqErr] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -27,18 +29,14 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
       try {
         const res = await fetch(`https://leetcodestats.cyclic.app/${leetCodeID}`);
         if (!res.ok) {
-          if (res.status === 404)
-            setNotFound("404: User Not Found");
-          else
-            setError(`Network response was not ok (status: ${res.status})`);
+          if (res.status === 404) setNotFound("404: User Not Found");
+          else setError(`Network response was not ok (status: ${res.status})`);
         }
 
         const data = await res.json();
         setData(data);
-        console.log("Data fetched successfully");
       } catch (err) {
         setError(err);
-        console.error("Error fetching data:", err);
       } finally {
         setIsLoading(false);
       }
@@ -54,7 +52,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
     totalMedium,
     hardSolved,
     totalHard,
-    //! totalSolved
+    totalSolved,
   } = data;
 
   return (
@@ -66,13 +64,17 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
           {error && <p>Error: {error}</p>}
           {data && !error && !notFound && !isLoading && (
             <>
-              <div className="mb-4 px-6">
+              <div className="mb-5 px-6 flex items-center justify-between">
                 <p className="font-semibold text-xl text-lp-greyer">
                   Hi, <span className="text-lp-white">{leetCodeID}</span>
                 </p>
+                <p className="font-medium text-sm text-lp-greyer">
+                  Total
+                  Solved <span className="text-lp-white underline">{totalSolved}</span>
+                </p>
               </div>
 
-              <div className="flex flex-col gap-2 mb-3">
+              <div className="flex flex-col gap-2 mb-5">
                 <div className="flex gap-2 items-center justify-around">
                   <div className="flex gap-2 justify-between w-7/12">
                     <p className={`text-lp-green text-xl font-semibold`}>Easy</p>
@@ -115,11 +117,14 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
                   </div>
                 </div>
               </div>
+
+              {!reqError && <DailyProblem setReqErr={setReqErr} />}
             </>
           )}
         </>
       ) : (
-        <Form setLeetCodeID={setLeetCodeID} type="update" />
+        <Form setLeetCodeID={setLeetCodeID}
+              type="update" />
       )}
 
       <div className="w-full flex justify-end">
