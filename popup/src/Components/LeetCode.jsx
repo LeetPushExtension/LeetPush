@@ -18,23 +18,27 @@ function calculateProgress(solved, total) {
 export default function LeetCode({ leetCodeID, setLeetCodeID }) {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(null);
   const [updateForm, setUpdateForm] = useState(false);
   const [reqError, setReqErr] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
+        setError("");
+        setNotFound("");
+
         const res = await fetch(`https://leetcodestats.cyclic.app/${leetCodeID}`);
         if (!res.ok) {
           if (res.status === 404) setNotFound("404: User Not Found");
           else setError(`Network response was not ok (status: ${res.status})`);
         }
-
+        
         const data = await res.json();
         setData(data);
+        setError("");
       } catch (err) {
         setError(err);
       } finally {

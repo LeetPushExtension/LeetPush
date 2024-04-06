@@ -8,12 +8,14 @@ DailyProblem.propTypes = {
 export default function DailyProblem({ setReqErr }) {
   const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchDailyProblem = async () => {
-      setIsLoading(true);
       try {
+        setIsLoading(true);
+        setError("");
+
         const res = await fetch(`https://alfa-leetcode-api.onrender.com/daily`);
         if (!res.ok) {
           if (res.status === 429) setReqErr(true);
@@ -22,6 +24,7 @@ export default function DailyProblem({ setReqErr }) {
 
         const data = await res.json();
         setData(data);
+        setError("");
       } catch (err) {
         setError(err);
       } finally {
