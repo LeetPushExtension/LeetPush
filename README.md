@@ -11,21 +11,13 @@
 - Conveniently pushes your LeetCode solutions directly to your GitHub
 	repository.
 - Saves you time and effort in manual code transfers.
+- Quickly access your LeetCode statistics and daily challenge problem.
 
-### Dependencies:
+### Installation and Usage:
 
-- LeetPush has no external dependencies. It is built using vanilla JS.
-
-### Installation:
-
-- Visit [LeetPush Extension](https://chromewebstore.google.com/detail/leetpush/gmagfdabfjaipjgdfgddjgongeemkalf).
-- Click "Add to Chrome" to install the extension.
-
-### Usage:
-
-**_The extension works only on Code Editor layout_**
-
-
+1. Visit [LeetPush Extension](https://chromewebstore.google.com/detail/leetpush/gmagfdabfjaipjgdfgddjgongeemkalf).
+2. Click "Add to Chrome" to install the extension.
+3. Change the LeetCode Layout to Code Editor layout.
 <details>
     <summary style="font-size: 14px; font-weight: bold">How to change the layout</summary>
 		<br>
@@ -38,22 +30,13 @@
     <img alt="step-3" src="assets/3.png"/>
 </details>
 
-**_One-Time Setup:_**
-
-- [Generate a GitHub token with access to only repositories](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig).
-- Grant the "repo" scope to allow the extension to push code to your
-	repositories.
-- Access a LeetCode problem and click the "Push" button (located next to the
-	submit button).
-- Enter your Repository URL, personal access token, and desired branch.
-- Click "Submit" to complete the setup.
-
-**_Pushing Solutions:_**
-
-- Solve the LeetCode problem you want to push.
-- Submit your solution.
-- Click the "Push" button.
-- Your code will be seamlessly transferred to GitHub!
+4. [Generate a GitHub token with access to only repositories](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig).
+5. Enter your Repository URL, personal access token, and desired branch.
+6. Click "Submit" to complete the setup.
+7. Solve the LeetCode problem you want to push.
+8. Submit your solution.
+9. Click the "Push" button.
+10. Your code will be seamlessly transferred to GitHub!
 
 ### Contributing:
 
