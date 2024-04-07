@@ -1,9 +1,9 @@
-import useLocalStorage from "./useLocalStorage.jsx";
-import LeetCode from "./LeetCode.jsx";
-import Icons from "./Icons.jsx";
-import Logo from "./Logo.jsx";
-import Form from "./Form.jsx";
-import Footer from "./Footer.jsx";
+import useLocalStorage from "./useLocalStorage.tsx";
+import LeetCode from "./LeetCode.tsx";
+import Icons from "./Icons.tsx";
+import Logo from "./Logo.js";
+import Form from "./Form.tsx";
+import Footer from "./Footer.tsx";
 
 export default function App() {
   const [leetCodeID, setLeetCodeID] = useLocalStorage(null, "lpLeetCodeID");
@@ -14,7 +14,7 @@ export default function App() {
       <Logo />
 
       {!leetCodeID ? (
-        <Form setLeetCodeID={setLeetCodeID} />
+        <Form type="" setLeetCodeID={setLeetCodeID} />
       ) : (
         <LeetCode setLeetCodeID={setLeetCodeID}
                   leetCodeID={leetCodeID} />

@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-import Loader from "./Loader.jsx";
-import NotFound from "./NotFound.jsx";
-import Form from "./Form.jsx";
-import DailyProblem from "./DailyProblem.jsx";
+import Loader from "./Loader";
+import NotFound from "./NotFound";
+import Form from "./Form";
+import DailyProblem from "./DailyProblem";
 
 LeetCode.propTypes = {
   leetCodeID: PropTypes.string.isRequired,
   setLeetCodeID: PropTypes.func.isRequired,
 };
 
-function calculateProgress(solved, total) {
+function calculateProgress(solved: number, total: number) {
   return (250 * (solved / total) * 100 / 100).toFixed();
 }
 
-export default function LeetCode({ leetCodeID, setLeetCodeID }) {
-  const [data, setData] = useState({});
+export default function LeetCode({ leetCodeID, setLeetCodeID }: {leetCodeID: string, setLeetCodeID: (id: string) => void }) {
+  const [data, setData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [notFound, setNotFound] = useState(null);
+  const [notFound, setNotFound] = useState<string | null>(null);
   const [updateForm, setUpdateForm] = useState(false);
   const [reqError, setReqErr] = useState(false);
 
@@ -39,7 +39,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }) {
         const data = await res.json();
         setData(data);
         setError("");
-      } catch (err) {
+      } catch (err: any) {
         setError(err);
       } finally {
         setIsLoading(false);
