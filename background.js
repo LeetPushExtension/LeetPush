@@ -4,7 +4,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       target: { tabId: tabId },
       func: async () => {
         let probNameElement, probName, probNum, solution, formattedSolution,
-          fileEx, runtimeText, memoryText, commitMsg, fileName, solutionsId;
+          fileEx, runtimeText, memoryText, queryRuntimeText, commitMsg,
+          fileName, solutionsId;
         const fileExs = {
           "C": ".c",
           "C++": ".cpp",
@@ -25,6 +26,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           "Scala": ".scala",
           "Swift": ".swift",
           "TypeScript": ".ts",
+          "MySQL": ".sql",
+          "PostgreSQL": ".sql",
+          "Oracle": ".sql",
+          "MS SQL Server": ".tsql",
+          "Pandas": ".py",
         };
         const localStorageExs = {
           "C": "c",
@@ -46,7 +52,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           "Scala": "scala",
           "Swift": "swift",
           "TypeScript": "typeScript",
+          "MySQL": "mysql",
+          "Oracle": "oraclesql",
+          "PostgreSQL": "postgresql",
+          "MS SQL Server": "mssql",
+          "Pandas": "pythondata",
         };
+        const dbs = ["MySQL", "Oracle", "PostgreSQL", "MS SQL Server", "Pandas"];
 
         /** Select problem name *************************************/
         probNameElement = document.querySelector(`div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a`);
@@ -64,19 +76,27 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           solution = localStorage.getItem(`${probNum}_${solutionsId}_${localStorageExs[solutionLangText]}`);
           await checkSolInLocalStorage(solution);
           /** Generate the file name ********************************/
-          if (solutionLangText)
-            fileEx = fileExs[solutionLangText];
+          if (solutionLangText) fileEx = fileExs[solutionLangText];
           fileName = `${probName}${fileEx}`;
           await sessionStorage.setItem("fileName", fileName);
           /** Select the mem&runtime ********************************/
-          const [runtime, memory] = document.querySelectorAll("div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold");
-          if (runtime && memory) {
-            runtimeText = runtime.innerText;
-            memoryText = memory.innerText;
+          let runtime, memory, queryRuntime;
+          if (dbs.includes(solutionLangText)) {
+            queryRuntime = document.querySelector("div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold");
+            if (queryRuntime) queryRuntimeText = queryRuntime.innerText;
+            /** Generate a commit message *****************************/
+            commitMsg = `[${probNum}] [Time Beats: ${queryRuntimeText}] - LeetPush`;
+            await sessionStorage.setItem("commitMsg", commitMsg);
+          } else {
+            [runtime, memory] = document.querySelectorAll("div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold");
+            if (runtime && memory) {
+              runtimeText = runtime.innerText;
+              memoryText = memory.innerText;
+            }
+            /** Generate a commit message *****************************/
+            commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}] - LeetPush`;
+            await sessionStorage.setItem("commitMsg", commitMsg);
           }
-          /** Generate a commit message *****************************/
-          commitMsg = `[${probNum}] [Time Beats: ${runtimeText}] [Memory Beats: ${memoryText}] - LeetPush`;
-          await sessionStorage.setItem("commitMsg", commitMsg);
         }
 
         /** Select Buttons containter *******************************/
