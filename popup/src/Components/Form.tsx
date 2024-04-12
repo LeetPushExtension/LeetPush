@@ -1,16 +1,10 @@
-import PropTypes from "prop-types";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
-Form.propTypes = {
-  setLeetCodeID: PropTypes.func.isRequired,
-  type: PropTypes.string,
-};
-
-export default function Form({ setLeetCodeID, type }) {
+export default function Form({ setLeetCodeID, type }: { setLeetCodeID: Function, type: string }) {
   const [input, setInput] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLeetCodeID(input);
 

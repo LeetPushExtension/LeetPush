@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import useLocalStorage from "./useLocalStorage";
-
-DailyProblem.propTypes = {
-  setReqErr: PropTypes.func.isRequired,
-};
 
 function getGSTDate() {
   const now = new Date();
   return `${now.getUTCFullYear()}${now.getUTCMonth() + 1}${now.getUTCDate()}`;
 }
 
-function useDailyProblem(setReqErr) {
-  const [data, setData] = useState(null);
+function useDailyProblem(setReqErr: (err: boolean) => void) {
+  const [data, setData] = useState<{questionLink: string, questionTitle:string, difficulty: string} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [daily, setDaily] = useLocalStorage(null, "dailyProblem");
@@ -49,7 +44,7 @@ function useDailyProblem(setReqErr) {
           questionTitle: dataJson.questionTitle,
           difficulty: dataJson.difficulty,
         });
-      } catch (err) {
+      } catch (err: any) {
         setError(err);
       } finally {
         setIsLoading(false);
@@ -62,10 +57,10 @@ function useDailyProblem(setReqErr) {
   return { data, isLoading, error };
 }
 
-export default function DailyProblem({ setReqErr }) {
+export default function DailyProblem({ setReqErr }: { setReqErr: (err: boolean) => void }) {
   const { data, isLoading, error } = useDailyProblem(setReqErr);
-  const getDifficultyColor = (difficulty) => {
-    const colors = {
+  const getDifficultyColor = (difficulty: string) => {
+    const colors: { [key: string]: string } = {
       Easy: "bg-lp-green-dark",
       Medium: "bg-lp-yellow-dark",
       Hard: "bg-lp-red-dark",
