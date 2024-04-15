@@ -223,7 +223,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         containerDiv.appendChild(form);
         modalDiv.appendChild(containerDiv);
         /** LeetPush Modal button Functionality *********************/
-        submitBtn.addEventListener("click", (event) => {
+        submitBtn.addEventListener("click", async (event) => {
           event.preventDefault();
           const repoUrl = document.querySelector("#repo-url").value;
           const token = document.querySelector("#token").value;
@@ -231,6 +231,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           localStorage.setItem("repo", repoUrl);
           localStorage.setItem("token", token);
           localStorage.setItem("branch", branch);
+          await changeReadmeAndDescription(token, repoUrl, branch);
           document.body.removeChild(modalDiv);
         });
 
@@ -307,6 +308,67 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               }),
             });
           }
+        }
+
+        async function changeReadmeAndDescription(token, repo, branch) {
+          const [userName, repoName] = repo.split("/").slice(3, 5);
+          const description = 'This repository is managed by LeetPush extention: https://github.com/husamahmud/LeetPush';
+          const readmeContent = '# LeetCode\n\nThis repository contains my solutions to LeetCode problems.\n\nCreated with :heart: by [LeetPush](https://github.com/husamahmud/LeetPush)\n\nMade by [Mahmoud Hamdy](https://github.com/TutTrue) - [Husam](https://github.com/husamahmud)\n\n';
+          const readmeApiUrl = `https://api.github.com/repos/${userName}/${repoName}/contents/README.md`;
+          const descriptionApiUrl = `https://api.github.com/repos/${userName}/${repoName}`;
+          const readmeExistsResponse = await fetch(
+            `https://api.github.com/repos/${userName}/${repoName}/contents/README.md?ref=${branch}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const descriptionResponse = await fetch(descriptionApiUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (readmeExistsResponse.ok) {
+            const updateReadmeResponse = await fetch(readmeApiUrl, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                message: "Update README.md",
+                content: btoa(readmeContent),
+                sha: (await readmeExistsResponse.json()).sha,
+              }),
+            });
+          } else {
+            const createReadmeResponse = await fetch(readmeApiUrl, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                message: "Create README.md",
+                content: btoa(readmeContent),
+                branch: branch,
+              }),
+            });
+          }
+
+          const descriptionData = await descriptionResponse.json();
+          const updateDescriptionResponse = await fetch(descriptionApiUrl, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              description: description,
+            }),
+          });
         }
 
         async function checkSolInLocalStorage(sol) {
