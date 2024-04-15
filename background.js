@@ -112,12 +112,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         lpEditDiv.id = "leetpush-div-edit";
         lpEditBtn.id = "leetpush-btn-edit";
         lpEditBtn.textContent = "Edit";
-        lpEditBtn.addEventListener("click", () => document.body.appendChild(modalDiv));
+        lpEditBtn.addEventListener("click", () => {
+          localStorage.removeItem('branch');
+          pushOnClick();
+        });
         lpEditDiv.appendChild(lpEditBtn);
         document.head.appendChild(lpEditDivStyle);
         /** Append the Edit button correctly to the page ************/
         const existingEditBtn = document.querySelector("#leetpush-div-edit");
-        if (!existingEditBtn) {
+        if (submissionsPage && !existingEditBtn && accepted) {
           if (parentDiv) parentDiv.appendChild(lpEditDiv);
         }
         /** Create LeetPush Push Button *****************************/
