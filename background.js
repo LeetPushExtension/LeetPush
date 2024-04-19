@@ -105,38 +105,25 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const accepted = document.querySelector("div.flex.h-full.w-full.flex-col.overflow-hidden.rounded > div > div > div.w-full.flex-1.overflow-y-auto > div > div.flex.w-full.items-center.justify-between.gap-4 > div.flex.flex-1.flex-col.items-start.gap-1.overflow-hidden > div.text-green-s.dark\\:text-dark-green-s.flex.flex-1.items-center.gap-2.text-\\[16px\\].font-medium.leading-6 > span");
         /** Check if the user in the submissions page ***************/
         const submissionsPage = window.location.href.includes("submissions");
-        /** Create LeetPush Edit Button *****************************/
-        const lpEditDiv = document.createElement("div");
-        const lpEditBtn = document.createElement("button");
-        const lpEditDivStyle = document.createElement("style");
-        lpEditDiv.id = "leetpush-div-edit";
-        lpEditBtn.id = "leetpush-btn-edit";
-        lpEditBtn.textContent = "Edit";
-        lpEditBtn.addEventListener("click", () => {
-          localStorage.removeItem('branch');
-          pushOnClick();
-        });
-        lpEditDiv.appendChild(lpEditBtn);
-        document.head.appendChild(lpEditDivStyle);
-        /** Append the Edit button correctly to the page ************/
-        const existingEditBtn = document.querySelector("#leetpush-div-edit");
-        if (submissionsPage && !existingEditBtn && accepted) {
-          if (parentDiv) parentDiv.appendChild(lpEditDiv);
-        }
-        /** Create LeetPush Push Button *****************************/
-        const lpDiv = document.createElement("div");
-        const lpBtn = document.createElement("button");
-        const lpDivStyle = document.createElement("style");
-        lpDiv.id = "leetpush-div";
-        lpBtn.id = "leetpush-btn";
-        lpBtn.textContent = "Push";
-        lpBtn.addEventListener("click", () => pushOnClick());
-        lpDiv.appendChild(lpBtn);
-        document.head.appendChild(lpDivStyle);
-        /** Append the Push button correctly to the page ************/
-        const existingPushBtn = document.querySelector("#leetpush-div");
-        if (submissionsPage && !existingPushBtn && accepted) {
-          if (parentDiv) parentDiv.appendChild(lpDiv);
+        /** Create LeetPush Push & Edit Buttons *****************************/
+        const lpDiv = `<div id="leetpush-div-edit"><button id="leetpush-btn-edit">Edit</button></div><div id="leetpush-div-push"><button id="leetpush-btn">Push</button></div>`
+        /** Append the Push & Edit Buttons correctly to the page ************/
+        const existingBtns = document.getElementById("leetpush-div-edit");
+        if (submissionsPage && !existingBtns && accepted) {
+          if (parentDiv) {
+            parentDiv.innerHTML += lpDiv;
+            
+            const editButton = document.getElementById("leetpush-div-edit");
+            const pushButton = document.getElementById("leetpush-div-push");
+
+            editButton.addEventListener("click", () => {
+              localStorage.removeItem('branch');
+              pushOnClick();
+            });
+            
+            pushButton.addEventListener("click", () => pushOnClick());
+          }
+            
         }
         /** Create LeetPush Modal ***********************************/
         const modalDiv = document.createElement("div");
