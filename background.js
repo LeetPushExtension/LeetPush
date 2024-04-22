@@ -202,6 +202,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             return;
           }
           const [repoName, userName] = repo.split("/").slice(3, 5);
+          const lpBtn = document.getElementById("leetpush-btn");
           lpBtn.disabled = true;
           lpBtn.textContent = "Loading...";
           await pushToGithub(
