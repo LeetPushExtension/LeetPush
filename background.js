@@ -112,7 +112,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         if (submissionsPage && !existingBtns && accepted) {
           if (parentDiv) {
             parentDiv.innerHTML += lpDiv;
-            
+
             const editButton = document.getElementById("leetpush-div-edit");
             const pushButton = document.getElementById("leetpush-div-push");
 
@@ -120,117 +120,85 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
               localStorage.removeItem('branch');
               pushOnClick();
             });
-            
+
             pushButton.addEventListener("click", () => pushOnClick());
           }
-            
         }
         /** Create LeetPush Modal ***********************************/
+        const modalDivContent = `
+        <div id="lp-container">
+          <div id="lp-close-btn">
+            <button>ⓧ</button>
+          </div>
+          <h3>Leet<span>Push</span></h3>
+          <form id="lp-form">
+            <div class="lp-div">
+              <label>Repository URL:</label>
+              <input type="text" id="repo-url" name="repo-url" required="">
+            </div>
+            <div class="lp-div">
+              <label>Token:<a href="https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig" target="_blank">Generate Token?</a></label>
+              <input type="text" id="token" name="token" required="">
+            </div>
+            <div id="lp-radios">
+              <div class="radio-div">
+                <input type="radio" id="branch-main" name="branch-name" value="main">
+                <label>main</label>
+              </div>
+              <div class="radio-div">
+                <input type="radio" id="branch-master" name="branch-name" value="master">
+                <label>master</label>
+              </div>
+            </div>
+            <button id="lp-submit-btn" type="submit">Submit</button>
+          </form>
+        </div>`
         const modalDiv = document.createElement("div");
         modalDiv.id = "lp-modal";
-        const containerDiv = document.createElement("div");
-        containerDiv.id = "lp-container";
-        const colseBtnDiv = document.createElement("div");
-        colseBtnDiv.id = "lp-close-btn";
-        const closeBtn = document.createElement("button");
-        closeBtn.textContent = "ⓧ";
-        colseBtnDiv.appendChild(closeBtn);
-        closeBtn.addEventListener("click", () => document.body.removeChild(modalDiv));
-        const h3 = document.createElement("h3");
-        h3.textContent = "Leet";
-        const span = document.createElement("span");
-        span.textContent = "Push";
-        h3.appendChild(span);
-        const form = document.createElement("form");
-        form.id = "lp-form";
-        const repoNameDiv = document.createElement("div");
-        repoNameDiv.className = "lp-div";
-        const repoNameLabel = document.createElement("label");
-        repoNameLabel.textContent = "Repository URL:";
-        const repoNameInput = document.createElement("input");
-        repoNameInput.type = "text";
-        repoNameInput.id = "repo-url";
-        repoNameInput.name = "repo-url";
-        repoNameInput.required = true;
-        repoNameDiv.appendChild(repoNameLabel);
-        repoNameDiv.appendChild(repoNameInput);
-        const tokenDiv = document.createElement("div");
-        tokenDiv.className = "lp-div";
-        const tokenLabel = document.createElement("label");
-        const howToCreateToken = document.createElement("a");
-        howToCreateToken.textContent = "Generate Token?";
-        howToCreateToken.href = "https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig";
-        howToCreateToken.setAttribute("target", "_blank");
-        tokenLabel.textContent = "Token:";
-        tokenLabel.appendChild(howToCreateToken);
-        tokenDiv.appendChild(tokenLabel);
-        const tokenInput = document.createElement("input");
-        tokenInput.type = "text";
-        tokenInput.id = "token";
-        tokenInput.name = "token";
-        tokenInput.required = true;
-        tokenDiv.appendChild(tokenLabel);
-        tokenDiv.appendChild(tokenInput);
-        const radioDivMaster = document.createElement("div");
-        const radioDivMain = document.createElement("div");
-        radioDivMaster.className = "radio-div";
-        radioDivMain.className = "radio-div";
-        const branchDiv = document.createElement("div");
-        branchDiv.id = "lp-radios";
-        const masterRadio = document.createElement("input");
-        masterRadio.type = "radio";
-        masterRadio.id = "branch-master";
-        masterRadio.name = "branch-name";
-        masterRadio.value = "master";
-        const masterLabel = document.createElement("label");
-        masterLabel.textContent = "master";
-        const mainRadio = document.createElement("input");
-        mainRadio.type = "radio";
-        mainRadio.id = "branch-main";
-        mainRadio.name = "branch-name";
-        mainRadio.value = "main";
-        const mainLabel = document.createElement("label");
-        mainLabel.textContent = "main";
-        branchDiv.appendChild(radioDivMain);
-        branchDiv.appendChild(radioDivMaster);
-        radioDivMaster.appendChild(masterRadio);
-        radioDivMaster.appendChild(masterLabel);
-        radioDivMain.appendChild(mainRadio);
-        radioDivMain.appendChild(mainLabel);
-        const submitBtn = document.createElement("button");
-        submitBtn.id = "lp-submit-btn";
-        submitBtn.type = "submit";
-        submitBtn.textContent = "Submit";
-        form.appendChild(repoNameDiv);
-        form.appendChild(tokenDiv);
-        form.appendChild(branchDiv);
-        form.appendChild(submitBtn);
-        containerDiv.appendChild(colseBtnDiv);
-        containerDiv.appendChild(h3);
-        containerDiv.appendChild(form);
-        modalDiv.appendChild(containerDiv);
-        /** LeetPush Modal button Functionality *********************/
-        submitBtn.addEventListener("click", async (event) => {
-          event.preventDefault();
-          const repoUrl = document.querySelector("#repo-url").value;
-          const token = document.querySelector("#token").value;
-          const branch = document.querySelector("input[name=\"branch-name\"]:checked").value;
-          localStorage.setItem("repo", repoUrl);
-          localStorage.setItem("token", token);
-          localStorage.setItem("branch", branch);
-          await changeReadmeAndDescription(token, repoUrl, branch);
-          document.body.removeChild(modalDiv);
-        });
+        modalDiv.innerHTML = modalDivContent;
+
+        function appendModal() {
+          const modal = document.getElementById("lp-modal");
+          if (!modal) {
+            document.body.appendChild(modalDiv);
+            
+            const closebtn = document.getElementById("lp-close-btn")
+            const submit = document.querySelector("#lp-submit-btn")
+            
+            closebtn.addEventListener("click", () => {
+              const modalDiv = document.getElementById("lp-modal");
+              document.body.removeChild(modalDiv);
+              submit.removeEventListener("click", handleSubmit);
+            }, { once: true });
+
+            submit.addEventListener("click", handleSubmit);
+
+            async function handleSubmit(e) {
+                e.preventDefault();
+                const repoUrl = document.querySelector("#repo-url").value;
+                const token = document.querySelector("#token").value;
+                const branch = document.querySelector("input[name=\"branch-name\"]:checked").value;
+                localStorage.setItem("repo", repoUrl);
+                localStorage.setItem("token", token);
+                localStorage.setItem("branch", branch);
+                submit.disabled = true;
+                await changeReadmeAndDescription(token, repoUrl, branch);
+                submit.disabled = false;
+                closebtn.click();
+              }
+            }
+
+        }
 
         async function pushOnClick() {
           const token = localStorage.getItem("token");
           const repo = localStorage.getItem("repo");
           const branch = localStorage.getItem("branch");
           if (!token || !repo || !branch) {
-            document.body.appendChild(modalDiv);
-            if (token) document.querySelector("#token").value = token;
-            if (repo) document.querySelector("#repo-url").value = repo;
-            if (branch) document.querySelector(`#branch-${branch}`).checked = true;
+            appendModal();
+            if (token) document.getElementById("token").value = token;
+            if (repo) document.getElementById("repo-url").value = repo;
+            if (branch) document.getElementById(`branch-${branch}`).checked = true;
             return;
           }
           const [repoName, userName] = repo.split("/").slice(3, 5);
