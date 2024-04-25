@@ -1,5 +1,5 @@
 /** LeetPush Push Button **/
-#leetpush-div, #leetpush-div-edit {
+#leetpush-div-push, #leetpush-div-edit {
   display: flex;
   align-items: center;
   text-align: center;
@@ -7,11 +7,11 @@
   border-radius: 0.5rem;
 }
 
-#leetpush-div {
+#leetpush-div-push {
   background-color: #e7a41e;
 }
 
-#leetpush-div:hover {
+#leetpush-div-push:hover {
   background-color: #e2b65c;
 }
 
