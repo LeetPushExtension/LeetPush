@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
 import Form from "./Form";
-import DailyProblem from "./DailyProblem";
+// import DailyProblem from "./DailyProblem";
 
 LeetCode.propTypes = {
   leetCodeID: PropTypes.string.isRequired,
@@ -21,7 +21,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }: {leetCodeID: str
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState<string | null>(null);
   const [updateForm, setUpdateForm] = useState(false);
-  const [reqError, setReqErr] = useState(false);
+  // const [reqError, setReqErr] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -35,7 +35,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }: {leetCodeID: str
           if (res.status === 404) setNotFound("404: User Not Found");
           else setError(`Network response was not ok (status: ${res.status})`);
         }
-        
+
         const data = await res.json();
         setData(data);
         setError("");
@@ -122,7 +122,7 @@ export default function LeetCode({ leetCodeID, setLeetCodeID }: {leetCodeID: str
                 </div>
               </div>
 
-              {!reqError && <DailyProblem setReqErr={setReqErr} />}
+              {/*{!reqError && <DailyProblem setReqErr={setReqErr} />}*/}
             </>
           )}
         </>
