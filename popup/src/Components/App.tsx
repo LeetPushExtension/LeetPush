@@ -9,7 +9,7 @@ export default function App() {
   const [leetCodeID, setLeetCodeID] = useLocalStorage(null, "lpLeetCodeID");
 
   return (
-    <div className="pt-5 pb-5 px-5">
+    <div className="pt-5 pb-3 px-5">
       <Icons />
       <Logo />
 
