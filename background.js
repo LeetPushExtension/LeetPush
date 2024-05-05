@@ -138,6 +138,22 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         if (submissionsPage && !existingPushBtn && accepted) {
           if (parentDiv) parentDiv.appendChild(lpDiv);
         }
+        /*************************************************************/
+        const createRadioOption = (id, value, name, labelText) => {
+          const radioDiv = document.createElement('div');
+          radioDiv.className = 'radio-div';
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.id = id;
+          radio.name = name;
+          radio.value = value;
+          const label = document.createElement('label');
+          label.textContent = labelText;
+          label.setAttribute('for', id);
+          radioDiv.appendChild(radio);
+          radioDiv.appendChild(label);
+          return radioDiv;
+        };
         /** Create LeetPush Modal ***********************************/
         const modalDiv = document.createElement('div');
         modalDiv.id = 'lp-modal';
@@ -146,7 +162,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const colseBtnDiv = document.createElement('div');
         colseBtnDiv.id = 'lp-close-btn';
         const closeBtn = document.createElement('button');
-        closeBtn.textContent = 'ⓧ';
+        closeBtn.textContent = 'X';
         colseBtnDiv.appendChild(closeBtn);
         closeBtn.addEventListener('click', () => document.body.removeChild(modalDiv));
         const h3 = document.createElement('h3');
@@ -154,8 +170,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const span = document.createElement('span');
         span.textContent = 'Push';
         h3.appendChild(span);
+
         const form = document.createElement('form');
         form.id = 'lp-form';
+
         const repoNameDiv = document.createElement('div');
         repoNameDiv.className = 'lp-div';
         const repoNameLabel = document.createElement('label');
@@ -167,6 +185,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         repoNameInput.required = true;
         repoNameDiv.appendChild(repoNameLabel);
         repoNameDiv.appendChild(repoNameInput);
+
         const tokenDiv = document.createElement('div');
         tokenDiv.className = 'lp-div';
         const tokenLabel = document.createElement('label');
@@ -188,34 +207,40 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const radioDivMain = document.createElement('div');
         radioDivMaster.className = 'radio-div';
         radioDivMain.className = 'radio-div';
+
+        const dailyChallengeDiv = document.createElement('div');
+        dailyChallengeDiv.className = 'lp-daily-challenge';
+        const pushDailyProblemsLabel = document.createElement('label');
+        pushDailyProblemsLabel.textContent = 'Daily problems on a separate folder:';
+        dailyChallengeDiv.appendChild(pushDailyProblemsLabel);
+        const dailyChallengeRadios = document.createElement('div');
+        dailyChallengeRadios.id = 'lp-radios';
+        const yesRadioDiv = createRadioOption('separate-folder-yes', 'yes', 'daily-challenge', 'yes');
+        const noRadioDiv = createRadioOption('separate-folder-no', 'no', 'daily-challenge', 'no');
+        dailyChallengeRadios.appendChild(yesRadioDiv);
+        dailyChallengeRadios.appendChild(noRadioDiv);
+        dailyChallengeDiv.appendChild(dailyChallengeRadios);
+
         const branchDiv = document.createElement('div');
-        branchDiv.id = 'lp-radios';
-        const masterRadio = document.createElement('input');
-        masterRadio.type = 'radio';
-        masterRadio.id = 'branch-master';
-        masterRadio.name = 'branch-name';
-        masterRadio.value = 'master';
-        const masterLabel = document.createElement('label');
-        masterLabel.textContent = 'master';
-        const mainRadio = document.createElement('input');
-        mainRadio.type = 'radio';
-        mainRadio.id = 'branch-main';
-        mainRadio.name = 'branch-name';
-        mainRadio.value = 'main';
-        const mainLabel = document.createElement('label');
-        mainLabel.textContent = 'main';
-        branchDiv.appendChild(radioDivMain);
-        branchDiv.appendChild(radioDivMaster);
-        radioDivMaster.appendChild(masterRadio);
-        radioDivMaster.appendChild(masterLabel);
-        radioDivMain.appendChild(mainRadio);
-        radioDivMain.appendChild(mainLabel);
+        const branchLabel = document.createElement('label');
+        branchLabel.textContent = 'Repository branch:';
+        const branchsDiv = document.createElement('div');
+        branchsDiv.id = 'lp-radios';
+        const masterRadioDiv = createRadioOption('branch-master', 'master', 'branch-name', 'master');
+        const mainRadioDiv = createRadioOption('branch-main', 'main', 'branch-name', 'main');
+        branchsDiv.appendChild(masterRadioDiv);
+        branchsDiv.appendChild(mainRadioDiv);
+        branchDiv.appendChild(branchLabel);
+        branchDiv.appendChild(branchsDiv);
+
         const submitBtn = document.createElement('button');
         submitBtn.id = 'lp-submit-btn';
         submitBtn.type = 'submit';
         submitBtn.textContent = 'Submit';
+
         form.appendChild(repoNameDiv);
         form.appendChild(tokenDiv);
+        form.appendChild(dailyChallengeDiv);
         form.appendChild(branchDiv);
         form.appendChild(submitBtn);
         containerDiv.appendChild(colseBtnDiv);
@@ -229,9 +254,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const repoUrl = repoUrlInput.endsWith('.git') ? repoUrlInput.slice(0, -4) : repoUrlInput;
           const token = document.querySelector('#token').value;
           const branch = document.querySelector('input[name="branch-name"]:checked').value;
+          const separateFolder = document.querySelector('input[name="daily-challenge"]:checked').value;
+
           localStorage.setItem('repo', repoUrl);
           localStorage.setItem('token', token);
           localStorage.setItem('branch', branch);
+          localStorage.setItem('separate-folder', separateFolder);
           document.body.removeChild(modalDiv);
           await changeReadmeAndDescription(token, repoUrl, branch);
         });
@@ -240,11 +268,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const token = localStorage.getItem('token');
           const repo = localStorage.getItem('repo');
           const branch = localStorage.getItem('branch');
-          if (!token || !repo || !branch) {
+          const separateFolder = localStorage.getItem('separate-folder');
+          if (!token || !repo || !branch || !separateFolder) {
             document.body.appendChild(modalDiv);
             if (token) document.querySelector('#token').value = token;
             if (repo) document.querySelector('#repo-url').value = repo;
             if (branch) document.querySelector(`#branch-${branch}`).checked = true;
+            if (separateFolder) document.querySelector(`#separate-folder-${separateFolder}`).checked = true;
             return;
           }
           const [repoName, userName] = repo.split('/').slice(3, 5);
