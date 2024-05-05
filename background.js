@@ -5,7 +5,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       func: async () => {
         let probNameElement, probName, probNum, solution, formattedSolution,
           fileEx, runtimeText, memoryText, queryRuntimeText, commitMsg,
-          fileName, solutionsId;
+          fileName, solutionsId, repoUrlInput;
         const fileExs = {
           'C': '.c',
           'C++': '.cpp',
@@ -225,7 +225,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         /** LeetPush Modal button Functionality *********************/
         submitBtn.addEventListener('click', async (event) => {
           event.preventDefault();
-          const repoUrl = document.querySelector('#repo-url').value;
+          repoUrlInput = document.querySelector('#repo-url').value;
+          const repoUrl = repoUrlInput.endsWith('.git') ? repoUrlInput.slice(0, -4) : repoUrlInput;
           const token = document.querySelector('#token').value;
           const branch = document.querySelector('input[name="branch-name"]:checked').value;
           localStorage.setItem('repo', repoUrl);
