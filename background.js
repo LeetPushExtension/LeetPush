@@ -273,8 +273,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             document.body.appendChild(modalDiv);
             if (token) document.querySelector('#token').value = token;
             if (repo) document.querySelector('#repo-url').value = repo;
-            if (branch) document.querySelector(`#branch-${branch}`).checked = true;
-            if (separateFolder) document.querySelector(`#separate-folder-${separateFolder}`).checked = true;
+            if (branch) document.querySelector(`input[name="branch-name"]:checked`).checked = true;
+            if (separateFolder) document.querySelector(`input[name="daily-challenge"]:checked`).checked = true;
             return;
           }
           const [repoName, userName] = repo.split('/').slice(3, 5);
@@ -286,6 +286,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             sessionStorage.getItem('solution'),
             sessionStorage.getItem('commitMsg'),
             token,
+            separateFolder,
           );
 
           if (res) {
@@ -304,6 +305,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           content,
           commitMsg,
           token,
+          separateFolder,
         ) {
           lpBtn.disabled = true;
           lpBtn.textContent = 'Loading...';
@@ -335,6 +337,17 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             lpBtn.disabled = false;
             lpBtn.textContent = 'Push';
             return false;
+          }
+
+          const [date, dailyProblemNum] = await getDailyChallenge();
+          if (separateFolder === 'yes' && dailyProblemNum === probNum) {
+            const splitDate = date.split('-');
+            const dailyFolder = `DCP-${splitDate[2]}-${splitDate[0].slice(2)}`;
+            console.log('FOUND IT');
+
+            // TODO: Implement the logic to push the solution to the daily challenge folder
+
+            return true;
           }
 
           if (fileExistsResponse.ok) {
@@ -444,6 +457,27 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
         function sleep(ms) {
           return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function getDailyChallenge() {
+          const response = await fetch('https://leetcode.com/graphql', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: `{
+                activeDailyCodingChallengeQuestion {
+                  date
+                  question {
+                    frontendQuestionId: questionFrontendId
+                  }
+                }
+              }`,
+            }),
+          });
+          const data = await response.json();
+          return [data.data.activeDailyCodingChallengeQuestion['date'], data.data.activeDailyCodingChallengeQuestion['question']['frontendQuestionId']];
         }
       },
     });
