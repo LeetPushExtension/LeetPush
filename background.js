@@ -6,6 +6,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         let probNameElement, probName, probNum, solution, formattedSolution,
           fileEx, runtimeText, memoryText, queryRuntimeText, commitMsg,
           fileName, solutionsId, repoUrlInput;
+        const BASE_URL = `https://api.github.com/repos`;
         const fileExs = {
           'C': '.c',
           'C++': '.cpp',
@@ -342,12 +343,8 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const [date, dailyProblemNum] = await getDailyChallenge();
           if (separateFolder === 'yes' && dailyProblemNum === probNum) {
             const splitDate = date.split('-');
-            const dailyFolder = `DCP-${splitDate[2]}-${splitDate[0].slice(2)}`;
-            console.log('FOUND IT');
-
-            // TODO: Implement the logic to push the solution to the daily challenge folder
-
-            return true;
+            const dailyFolder = `DCP-${splitDate[1]}-${splitDate[0].slice(2)}`;
+            return await pushFileToRepo(userName, repoName, `${dailyFolder}/${fileName}`, branch, content, commitMsg, token);
           }
 
           if (fileExistsResponse.ok) {
@@ -478,6 +475,38 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           });
           const data = await response.json();
           return [data.data.activeDailyCodingChallengeQuestion['date'], data.data.activeDailyCodingChallengeQuestion['question']['frontendQuestionId']];
+        }
+
+        async function pushFileToRepo(userName, repoName, filePath, branch, content, commitMsg, token) {
+          const apiUrl = `${BASE_URL}/${userName}/${repoName}/contents/${filePath}`;
+          const fileExistsRes = await fetch(`${apiUrl}?ref=${branch}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const requestBody = {
+            message: commitMsg,
+            content: btoa(content),
+          };
+
+          if (fileExistsRes.ok) {
+            const existingFileData = await fileExistsRes.json();
+            requestBody.sha = existingFileData.sha;
+          } else {
+            requestBody.branch = branch;
+          }
+
+          const res = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(requestBody),
+          });
+
+          return res.ok;
         }
       },
     });
