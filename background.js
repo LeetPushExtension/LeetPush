@@ -107,9 +107,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         /** Check if the user in the submissions page ***************/
         const submissionsPage = window.location.href.includes('submissions');
         /** Create LeetPush Edit Button *****************************/
-        const lpEditDiv = document.createElement('div');
-        const lpEditBtn = document.createElement('button');
-        const lpEditDivStyle = document.createElement('style');
+        let lpEditDiv = document.createElement('div');
+        let lpEditBtn = document.createElement('button');
+        let lpEditDivStyle = document.createElement('style');
         lpEditDiv.id = 'leetpush-div-edit';
         lpEditBtn.id = 'leetpush-btn-edit';
         lpEditBtn.textContent = 'Edit';
@@ -120,7 +120,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         lpEditDiv.appendChild(lpEditBtn);
         document.head.appendChild(lpEditDivStyle);
         /** Append the Edit button correctly to the page ************/
-        const existingEditBtn = document.querySelector('#leetpush-div-edit');
+        let existingEditBtn = document.querySelector('#leetpush-div-edit');
         if (submissionsPage && !existingEditBtn && accepted) {
           if (parentDiv) parentDiv.appendChild(lpEditDiv);
         }
@@ -135,10 +135,38 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         lpDiv.appendChild(lpBtn);
         document.head.appendChild(lpDivStyle);
         /** Append the Push button correctly to the page ************/
-        const existingPushBtn = document.querySelector('#leetpush-div');
+        let existingPushBtn = document.querySelector('#leetpush-div');
         if (submissionsPage && !existingPushBtn && accepted) {
           if (parentDiv) parentDiv.appendChild(lpDiv);
         }
+
+        /** Push & Edit buttons in CodeEditor Layout **********************/
+        const parentDivCodeEditor = document.querySelector("#ide-top-btns > div:nth-child(1) > div > div > div:nth-child(2) > div > div:nth-child(2) > div > div:last-child")
+        lpEditDiv.id = 'leetpush-div-edit-CodeEditor';
+        lpEditBtn.id = 'leetpush-btn-edit-CodeEditor';
+        lpEditBtn.textContent = 'Edit';
+        lpEditBtn.addEventListener('click', () => {
+          localStorage.removeItem('branch');
+          pushOnClick();
+        });
+        lpEditDiv.appendChild(lpEditBtn);
+        document.head.appendChild(lpEditDivStyle);
+        existingEditBtn = document.querySelector('#leetpush-div-edit-CodeEditor');
+        if (submissionsPage && !existingEditBtn && accepted) {
+          if (parentDivCodeEditor) parentDivCodeEditor.appendChild(lpEditDiv);
+        }
+
+        lpDiv.id = 'leetpush-div-CodeEditor';
+        lpBtn.id = 'leetpush-btn-CodeEditor';
+        lpBtn.textContent = 'Push';
+        lpBtn.addEventListener('click', () => pushOnClick());
+        lpDiv.appendChild(lpBtn);
+        document.head.appendChild(lpDivStyle);
+        existingPushBtn = document.querySelector('#leetpush-div-CodeEditor');
+        if (submissionsPage && !existingPushBtn && accepted) {
+          if (parentDivCodeEditor) parentDivCodeEditor.appendChild(lpDiv);
+        }
+
         /*************************************************************/
         const createRadioOption = (id, value, name, labelText) => {
           const radioDiv = document.createElement('div');
@@ -166,6 +194,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         closeBtn.textContent = 'X';
         colseBtnDiv.appendChild(closeBtn);
         closeBtn.addEventListener('click', () => document.body.removeChild(modalDiv));
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') document.body.removeChild(modalDiv);
+        });
         const h3 = document.createElement('h3');
         h3.textContent = 'Leet';
         const span = document.createElement('span');
