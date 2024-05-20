@@ -1,24 +1,24 @@
 /** LeetPush Push Button **/
-#leetpush-div, #leetpush-div-edit {
+#leetpush-div, #leetpush-div-edit, #leetpush-div-CodeEditor, #leetpush-div-edit-CodeEditor {
   display: flex;
   align-items: center;
   text-align: center;
   margin-left: 0.5rem;
   border-radius: 0.5rem;
+	font-size: 13px;
 }
 
-#leetpush-div {
+#leetpush-div, #leetpush-div-CodeEditor {
   background-color: #e7a41e;
 }
 
-#leetpush-div:hover {
+#leetpush-div:hover, #leetpush-div-CodeEditor:hover {
   background-color: #e2b65c;
 }
 
-#leetpush-btn {
+#leetpush-btn, #leetpush-btn-CodeEditor {
   line-height: 18px;
   font-weight: 600;
-  font-size: 13px;
   padding-inline: 1.25rem;
   padding-block: 0.375rem;
   user-select: none;
@@ -27,15 +27,15 @@
 }
 
 /** LeetPush Edit Button **/
-#leetpush-div-edit {
+#leetpush-div-edit, #leetpush-div-edit-CodeEditor {
   background-color: rgb(26 26 26);
 }
 
-#leetpush-div-edit:hover {
+#leetpush-div-edit:hover, #leetpush-div-edit-CodeEditor:hover {
   background-color: rgba(26, 26, 26, 0.8);
 }
 
-#leetpush-btn-edit {
+#leetpush-btn-edit, #leetpush-btn-edit-CodeEditor {
   line-height: 18px;
   font-weight: 600;
   font-size: 13px;
