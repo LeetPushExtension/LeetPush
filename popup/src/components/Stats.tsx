@@ -61,22 +61,22 @@ export default function FetchUserStats({ leetCodeUsername }: {
   return (
     <div className="mb-4">
       <div className="flex justify-between mb-3">
-        <p className="font-semibold">
+        <p className="font-semibold text-base">
           <span className="text-lp-green mr-2">Easy</span>
           <span className="text-lp-white">{userStats.easySolved}</span>
         </p>
 
-        <p className="font-semibold">
+        <p className="font-semibold text-base">
           <span className="text-lp-yellow mr-2">Medium</span>
           <span className="text-lp-white">{userStats.mediumSolved}</span>
         </p>
 
-        <p className="font-semibold">
+        <p className="font-semibold text-base">
           <span className="text-lp-red mr-2">Hard</span>
           <span className="text-lp-white">{userStats.hardSolved}</span>
         </p>
 
-        <p className="font-semibold text-lp-greyer">
+        <p className="font-semibold text-base text-lp-greyer">
           Total <span className="text-lp-white underline">{userStats.solvedProblem}</span>
         </p>
       </div>
