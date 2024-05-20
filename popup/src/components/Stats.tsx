@@ -6,6 +6,7 @@ interface UserStats {
   easySolved: number;
   mediumSolved: number;
   hardSolved: number;
+  errors: { message: string; path: string[] }[];
 }
 
 export default function FetchUserStats({ leetCodeUsername }: {

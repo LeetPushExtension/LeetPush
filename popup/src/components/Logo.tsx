@@ -2,7 +2,7 @@ export default function Logo() {
   return (
     <>
       <div className="text-center mb-4 select-none flex items-center justify-center gap-2">
-        <img src="/icon.png"
+        <img src="icon.png"
              alt="logo"
              className="w-5"
         />

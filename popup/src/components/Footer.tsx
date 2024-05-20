@@ -7,14 +7,14 @@ export default function Footer() {
           <a href="https://twitter.com/husamahmud"
              target="_blank"
              className="ml-1">
-            <img src="/twitter.svg"
+            <img src="twitter.svg"
                  width="17rem"
                  alt="twitter" />
           </a>
         <a href="https://www.linkedin.com/in/husamahmud/"
            target="_blank"
            className="ml-1">
-            <img src="/linkedin.svg"
+            <img src="linkedin.svg"
                  width="17rem"
                  alt="linkedin" />
           </a>
