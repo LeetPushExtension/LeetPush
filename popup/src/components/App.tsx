@@ -5,10 +5,6 @@ import LeetCode from './LeetCode.tsx'
 import Form from './Form.tsx'
 import useLocalStorage from './useLocalStorage'
 
-/**
- * TODO: handle not found user
- **/
-
 export default function App() {
   const [leetCodeUsername, setLeetCodeUsername] = useLocalStorage('', 'leetCodeUsername')
 
@@ -17,7 +13,8 @@ export default function App() {
       <Icons />
       <Logo />
       {leetCodeUsername ? (
-        <LeetCode leetCodeUsername={leetCodeUsername} />
+        <LeetCode leetCodeUsername={leetCodeUsername}
+                  setLeetCodeUsername={setLeetCodeUsername} />
       ) : (
         <Form setLeetCodeUsername={setLeetCodeUsername} />
       )}

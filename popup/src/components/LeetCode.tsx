@@ -5,10 +5,12 @@ import FetchUserStats from './Stats.tsx'
 import Welcome from './Welcome.tsx'
 import Form from './Form.tsx'
 
-export default function LeetCode({ leetCodeUsername: initialUsername }: {
-  leetCodeUsername: string
-}) {
-  const [leetCodeUsername, setLeetCodeUsername] = useState(initialUsername)
+interface LeetCodeProps {
+  leetCodeUsername: string;
+  setLeetCodeUsername: (username: string) => void;
+}
+
+const LeetCode = ({ leetCodeUsername, setLeetCodeUsername }: LeetCodeProps) => {
   const [editMode, setEditMode] = useState(false)
 
   const toggleEditMode = () => {
@@ -41,3 +43,5 @@ export default function LeetCode({ leetCodeUsername: initialUsername }: {
     </>
   )
 }
+
+export default LeetCode
