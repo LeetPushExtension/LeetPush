@@ -75,7 +75,6 @@ export default function Daily() {
   return (
     <div>
       {error && <p className="text-red-500">{`Error: ${error}`}</p>}
-      {isLoading && <p className="text-blue-500">Loading...</p>}
       {data && !error && !isLoading && (
         <div className="flex flex-col mb-2">
           <p className="font-medium text-sm">Daily Problem</p>
