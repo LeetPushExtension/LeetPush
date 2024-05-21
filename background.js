@@ -253,6 +253,18 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         dailyChallengeRadios.appendChild(noRadioDiv);
         dailyChallengeDiv.appendChild(dailyChallengeRadios);
 
+        const customDirDiv = document.createElement('div');
+        customDirDiv.className = 'lp-div';
+        const customDirLabel = document.createElement('label');
+        customDirLabel.textContent = 'Target directory push:';
+        const customDirInput = document.createElement('input');
+        customDirInput.type = 'text';
+        customDirInput.id = 'custom-dir';
+        customDirInput.name = 'custom-dir';
+        customDirInput.placeholder = 'Leave empty to push to the root.';
+        customDirDiv.appendChild(customDirLabel);
+        customDirDiv.appendChild(customDirInput);
+
         const branchDiv = document.createElement('div');
         const branchLabel = document.createElement('label');
         branchLabel.textContent = 'Repository branch:';
@@ -272,6 +284,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
         form.appendChild(repoNameDiv);
         form.appendChild(tokenDiv);
+        form.appendChild(customDirDiv);
         form.appendChild(dailyChallengeDiv);
         form.appendChild(branchDiv);
         form.appendChild(submitBtn);
@@ -287,11 +300,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const token = document.querySelector('#token').value;
           const branch = document.querySelector('input[name="branch-name"]:checked').value;
           const separateFolder = document.querySelector('input[name="daily-challenge"]:checked').value;
+          const customDir = document.querySelector('#custom-dir').value;
 
           localStorage.setItem('repo', repoUrl);
           localStorage.setItem('token', token);
           localStorage.setItem('branch', branch);
           localStorage.setItem('separate-folder', separateFolder);
+          localStorage.setItem('custom-dir', customDir);
           document.body.removeChild(modalDiv);
           await changeReadmeAndDescription(token, repoUrl, branch);
         });
@@ -301,12 +316,14 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           const repo = localStorage.getItem('repo');
           const branch = localStorage.getItem('branch');
           const separateFolder = localStorage.getItem('separate-folder');
+          const customDir = localStorage.getItem('custom-dir');
           if (!token || !repo || !branch || !separateFolder) {
             document.body.appendChild(modalDiv);
             if (token) document.querySelector('#token').value = token;
             if (repo) document.querySelector('#repo-url').value = repo;
             if (branch) document.querySelector(`input[name="branch-name"]:checked`).checked = true;
             if (separateFolder) document.querySelector(`input[name="daily-challenge"]:checked`).checked = true;
+            if (customDirDiv) document.querySelector('#custom-dir').value = customDir;
             return;
           }
           const [repoName, userName] = repo.split('/').slice(3, 5);
@@ -319,6 +336,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             sessionStorage.getItem('commitMsg'),
             token,
             separateFolder,
+            customDir,
           );
 
           if (res) {
@@ -338,6 +356,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           commitMsg,
           token,
           separateFolder,
+          customDir,
         ) {
           lpBtn.disabled = true;
           lpBtn.textContent = 'Loading...';
@@ -369,6 +388,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             lpBtn.disabled = false;
             lpBtn.textContent = 'Push';
             return false;
+          }
+
+          if (customDir) {
+            return await pushFileToRepo(userName, repoName, `${customDir}/${fileName}`, branch, content, commitMsg, token);
           }
 
           const [date, dailyProblemNum] = await getDailyChallenge();

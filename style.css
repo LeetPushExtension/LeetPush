@@ -62,7 +62,7 @@
 
 #lp-container {
   width: 350px;
-  height: 450px;
+  height: 550px;
   background-color: rgb(48, 48, 48);
   box-shadow: 0 1px 3px #0000003d, 0 10px 28px -4px #0000007a;
   border-radius: 1rem;
@@ -104,20 +104,21 @@
       flex-direction: column;
       gap: .5rem;
 
-      input {
-        width: 100%;
-        border-radius: 0.2rem;
-        padding-inline: 0.5rem;
-        padding-block: 0.2rem;
-        margin: 0;
-        border: none;
-        outline: none;
-        background-color: white;
-        font-family: inherit;
-        font-size: inherit;
-        color: black;
-        box-sizing: border-box;
-      }
+    }
+
+    input[type='text'] {
+      width: 100%;
+      border-radius: 0.2rem;
+      padding-inline: 0.5rem;
+      padding-block: 0.2rem;
+      margin: 0;
+      border: none;
+      outline: none;
+      background-color: white;
+      font-family: inherit;
+      font-size: inherit;
+      color: black;
+      box-sizing: border-box;
     }
 
     .lp-div:nth-child(2) {
