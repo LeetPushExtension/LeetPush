@@ -1,42 +1,47 @@
 # LeetPush Chrome Extension
 
-<div style="width: 100%; display: flex; justify-content: center">
-	<img alt="logo.jpeg" src="assets/logo.jpeg"/>
-</div>
+![License](https://img.shields.io/github/license/husamahmud/LeetPush)
+![Version](https://img.shields.io/chrome-web-store/v/gmagfdabfjaipjgdfgddjgongeemkalf)
+![JavaScript](https://img.shields.io/badge/JavaScript-blue?logo=javascript)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Express](https://img.shields.io/badge/Express-black?logo=express&logoColor=white)
+![GraphQL](https://img.shields.io/badge/GraphQL-E10098?logo=GraphQL&logoColor=white)
+![React](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?logo=tailwind-css&logoColor=white)
+![Stars](https://img.shields.io/github/stars/husamahmud/LeetPush)
 
-## Stay Focused on Solving, Let _LeetPush_ Handle the Pushing!
+
+<img src="/assets/logo.jpeg" alt="">
+
+## What is LeetPush?
+
+LeetPush is a powerful Chrome extension designed for LeetCode enthusiasts who
+wish to automate the process of pushing their coding solutions directly to their
+GitHub repositories.
 
 ### Features:
 
-- Conveniently pushes your LeetCode solutions directly to your GitHub
-	repository.
-- Saves you time and effort in manual code transfers.
-- Quickly access your LeetCode statistics and daily challenge problem.
+- One-Click Push: Automatically push your solved problems from LeetCode to
+  GitHub.
+- Easy Configuration: Set up once with your GitHub token and repository details,
+  and you're all set.
+- Seamless Integration: Integrates directly into the LeetCode interface for a
+  smooth workflow.
+- Customization: Choose which solutions to push and manage different
+  repositories if needed.
 
 ### Installation and Usage:
 
-1. Visit [LeetPush Extension](https://chromewebstore.google.com/detail/leetpush/gmagfdabfjaipjgdfgddjgongeemkalf).
-2. Click "Add to Chrome" to install the extension.
-3. Change the LeetCode Layout to Code Editor layout.
-<details>
-    <summary style="font-size: 14px; font-weight: bold">How to change the layout</summary>
-		<br>
-    <img alt="step-1" src="assets/1.png"/>
-		<br>
-		<br>
-    <img alt="step-2" src="assets/2.png"/>
-		<br>
-		<br>
-    <img alt="step-3" src="assets/3.png"/>
-</details>
+- Download LeetPush from the Chrome Web Store: [**Link**](https://chromewebstore.google.com/detail/leetpush/gmagfdabfjaipjgdfgddjgongeemkalf?hl=en-GB&authuser=0)
+- Generate a personal access token on GitHub with repository
+  access. [**Link**](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig)
+- Solve a problem on LeetCode and click on the `Push` button.
+- Enter your GitHub username, repository name, and the access token.
+- Click on `Push` to push the solution to your GitHub repository.
 
-4. [Generate a GitHub token with access to only repositories](https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig).
-5. Enter your Repository URL, personal access token, and desired branch.
-6. Click "Submit" to complete the setup.
-7. Solve the LeetCode problem you want to push.
-8. Submit your solution.
-9. Click the "Push" button.
-10. Your code will be seamlessly transferred to GitHub!
+### Explanation Video
+
+- Watch this detailed video to get a walkthrough of LeetPush installation and
+  usage: [**Link**](https://www.youtube.com/watch?v=7psCr_Pu7GA)
 
 ### Contributing:
 
