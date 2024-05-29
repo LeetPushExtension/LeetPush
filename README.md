@@ -40,8 +40,7 @@ GitHub repositories.
 
 ### Explanation Video
 
-- Watch this detailed video to get a walkthrough of LeetPush installation and
-  usage: [**Link**](https://www.youtube.com/watch?v=7psCr_Pu7GA)
+[![Watch the Explanation Video](http://img.youtube.com/vi/7psCr_Pu7GA/0.jpg)](https://www.youtube.com/watch?v=7psCr_Pu7GA)
 
 ### Contributing:
 
