@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "LeetPush",
-	"version": "1.4.15",
+	"version": "1.4.16",
 	"description": "Effortlessly capture and push LeetCode solutions to your GitHub repository",
 	"background": {
 		"service_worker": "background.js"
