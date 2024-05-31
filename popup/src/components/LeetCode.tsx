@@ -4,13 +4,9 @@ import Daily from './Daily.tsx'
 import FetchUserStats from './Stats.tsx'
 import Welcome from './Welcome.tsx'
 import Form from './Form.tsx'
+import { LeetCodePropsI } from '../utils/types.ts'
 
-interface LeetCodeProps {
-  leetCodeUsername: string;
-  setLeetCodeUsername: (username: string) => void;
-}
-
-const LeetCode = ({ leetCodeUsername, setLeetCodeUsername }: LeetCodeProps) => {
+const LeetCode = ({ leetCodeUsername, setLeetCodeUsername }: LeetCodePropsI) => {
   const [editMode, setEditMode] = useState(false)
 
   const toggleEditMode = () => {

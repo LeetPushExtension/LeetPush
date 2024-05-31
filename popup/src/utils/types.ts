@@ -15,3 +15,23 @@ export interface QDataI {
     translatedName: null | string;
   }[];
 }
+
+export interface LeetCodePropsI {
+  leetCodeUsername: string;
+  setLeetCodeUsername: (username: string) => void;
+}
+
+export interface UserStatsI {
+  data: UStatsI
+}
+
+export interface UStatsI {
+  acSubmissionNum: {
+    difficulty: 'All' | 'Easy' | 'Medium' | 'Hard'
+    count: number
+  }[]
+  allQuestionsCount: {
+    difficulty: 'All' | 'Easy' | 'Medium' | 'Hard'
+    count: number
+  }[]
+}
