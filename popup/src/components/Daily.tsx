@@ -1,40 +1,15 @@
 import { useEffect, useState } from 'react'
 
-interface QuestionData {
-  questionLink: string;
-  questionTitle: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  date: string;
-}
-
-function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0]
-}
-
-function saveToLocalStorage(data: QuestionData): void {
-  localStorage.setItem('dailyProblem', JSON.stringify(data))
-}
-
-function loadFromLocalStorage(): QuestionData | null {
-  const data = localStorage.getItem('dailyProblem')
-  return data ? JSON.parse(data) : null
-}
-
-function getDifficultyColor(difficulty: 'Easy' | 'Medium' | 'Hard'): string {
-  switch (difficulty) {
-    case 'Easy':
-      return 'bg-lp-green-dark bg-lp-green'
-    case 'Medium':
-      return 'bg-lp-yellow-dark bg-lp-yellow'
-    case 'Hard':
-      return 'bg-lp-red-dark bg-lp-red'
-    default:
-      return 'text-gray-500 bg-gray-100'
-  }
-}
+import { formatDate } from '../utils/formatDate.ts'
+import {
+  loadFromLocalStorage,
+  saveToLocalStorage,
+} from '../utils/localStorage.ts'
+import { getDifficultyColor } from '../utils/getDifficultyColor.ts'
+import { QuestionDataI, QDataI } from '@/utils/types.ts'
 
 export default function Daily() {
-  const [data, setData] = useState<QuestionData | null>(null)
+  const [data, setData] = useState<QuestionDataI | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -53,13 +28,13 @@ export default function Daily() {
       }
 
       try {
-        const res = await fetch(`https://alfa-leetcode-api.onrender.com/daily`)
+        const res = await fetch(`${import.meta.env.VITE_LEETPUSH_API_URL}/daily`)
         if (!res.ok) {
           throw new Error('Failed to fetch the daily problem')
         }
 
-        const json: QuestionData = await res.json()
-        json.date = today
+        const json: QuestionDataI = await res.json()
+        json.data.date = today
         saveToLocalStorage(json)
         setData(json)
       } catch (err: any) {
@@ -72,6 +47,8 @@ export default function Daily() {
     fetchDailyProblem()
   }, [])
 
+  const questionData: QDataI = data?.data
+
   return (
     <div>
       {error && <p className="text-red-500">{`Error: ${error}`}</p>}
@@ -80,18 +57,18 @@ export default function Daily() {
           <p className="font-medium text-sm">Daily Problem</p>
           <div>
             <a
-              href={data.questionLink}
+              href={`https://leetcode.com${questionData.link}`}
               target="_blank"
               rel="noreferrer"
               className="text-sm font-semibold underline mr-3 transition-colors duration-200 hover:text-blue-500"
-              aria-label={`Read more about the daily problem: ${data.questionTitle}`}
+              aria-label={`Read more about the daily problem: ${questionData.title}`}
             >
-              {data.questionTitle}
+              {questionData.title}
             </a>
             <span
-              className={`text-sm font-semibold px-1 py-1 ${getDifficultyColor(data.difficulty)} rounded-md`}
+              className={`text-sm font-semibold px-1 py-1 ${getDifficultyColor(questionData.difficulty)} rounded-md`}
             >
-              {data.difficulty}
+                {questionData.difficulty}
             </span>
           </div>
         </div>
