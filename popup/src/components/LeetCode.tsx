@@ -4,9 +4,13 @@ import Daily from './Daily.tsx'
 import FetchUserStats from './Stats.tsx'
 import Welcome from './Welcome.tsx'
 import Form from './Form.tsx'
+import Streak from './Streak.tsx'
 import { LeetCodePropsI } from '../utils/types.ts'
 
-const LeetCode = ({ leetCodeUsername, setLeetCodeUsername }: LeetCodePropsI) => {
+const LeetCode = ({
+                    leetCodeUsername,
+                    setLeetCodeUsername,
+                  }: LeetCodePropsI) => {
   const [editMode, setEditMode] = useState(false)
 
   const toggleEditMode = () => {
@@ -26,6 +30,7 @@ const LeetCode = ({ leetCodeUsername, setLeetCodeUsername }: LeetCodePropsI) => 
         <>
           <Welcome leetCodeUsername={leetCodeUsername} />
           <FetchUserStats leetCodeUsername={leetCodeUsername} />
+          <Streak leetCodeUsername={leetCodeUsername} />
           <Daily />
 
           <div className="w-full flex justify-end">
