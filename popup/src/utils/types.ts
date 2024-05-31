@@ -1,5 +1,6 @@
 export interface QuestionDataI {
   data: QDataI;
+  date?: string;
 }
 
 export interface QDataI {
