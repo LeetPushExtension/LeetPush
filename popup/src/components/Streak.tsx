@@ -64,6 +64,11 @@ export default function Streak({ leetCodeUsername }: {
 
   if (isLoading) return <Loader />
   if (error || !userCalendar) return <div className="text-lp-red font-semibold mb-4">{error}</div>
+  if (userStreak === 0) return (
+    <div className="text-center font-semibold mb-3 text-sm">
+      No submissions in the current year. Time to start coding!
+    </div>
+  )
 
   return (
     <div className="pt-2 pb-5 px-3 mx-auto bg-transparent">
