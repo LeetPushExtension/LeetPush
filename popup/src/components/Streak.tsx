@@ -77,7 +77,7 @@ export default function Streak({ leetCodeUsername }: {
         Streak: <span className="font-semibold underline">{userStreak}</span> {getStreakEmoji(userStreak)}
       </p>
       <div ref={endRef}
-           className="grid grid-flow-col overflow-scroll grid-rows-7 gap-1">
+           className="grid grid-flow-col overflow-x-scroll grid-rows-7 scrollbar-hidden gap-1">
         {daysArray.map((day, index) => (
           <div key={index}
                className="h-[15px] w-[15px] m-auto rounded-[0.175rem]"
