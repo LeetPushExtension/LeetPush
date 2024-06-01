@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import Loader from './Loader.tsx'
 import { getColor } from '../utils/getColor.ts'
+import { getStreakEmoji } from '../utils/getStreakEmoji.ts'
 
 export default function Streak({ leetCodeUsername }: {
   leetCodeUsername: string
 }) {
   const [userCalendar, setUserCalendar] = useState({})
+  const [userStreak, setUserStreak] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const endRef = useRef(null)
@@ -22,6 +24,7 @@ export default function Streak({ leetCodeUsername }: {
         }
 
         const data = await res.json()
+        setUserStreak(data.streak)
         setUserCalendar(data.submissionCalendar)
       } catch (error: any) {
         setError(error.message)
@@ -64,6 +67,10 @@ export default function Streak({ leetCodeUsername }: {
 
   return (
     <div className="pt-2 pb-5 px-3 mx-auto bg-transparent">
+      <p className="font-medium text-center text-sm mb-3">
+        Your Current
+        Streak: <span className="font-semibold underline">{userStreak}</span> {getStreakEmoji(userStreak)}
+      </p>
       <div ref={endRef}
            className="grid grid-flow-col overflow-scroll grid-rows-7 gap-1">
         {daysArray.map((day, index) => (
