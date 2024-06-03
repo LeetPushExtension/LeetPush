@@ -1,49 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
+import { useEffect } from 'react'
 
-import Loader from './Loader.tsx'
 import { UserStatsI, UStatsI } from '../utils/types.ts'
 
+async function fetchUserStats(leetCodeUsername: string): Promise<UserStatsI> {
+  const res = await fetch(`${import.meta.env.VITE_LEETPUSH_API_URL}/${leetCodeUsername}`)
+  if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('Too Many Requests, please try again later')
+    } else {
+      throw new Error('Failed to fetch user statistics')
+    }
+  }
 
-export default function FetchUserStats({ leetCodeUsername }: {
+  const data: UserStatsI = await res.json()
+  if (!data.data.acSubmissionNum) {
+    throw new Error('User not found. Please check the user details.')
+  }
+
+  return data
+}
+
+export default function FetchUserStats({ leetCodeUsername, setLoading }: {
   leetCodeUsername: string
+  setLoading: (loading: boolean) => void
 }) {
-  const [userStats, setUserStats] = useState<UserStatsI | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: userStats, error, isLoading } = useQuery<UserStatsI, Error>(
+    ['fetchUserStats', leetCodeUsername],
+    () => fetchUserStats(leetCodeUsername),
+    { onSettled: () => setLoading(false) },
+  )
 
   useEffect(() => {
-    const fetchStats = async () => {
-      setIsLoading(true)
-      setError(null)
+    setLoading(isLoading)
+  }, [isLoading, setLoading])
 
-      try {
-        const response = await fetch(`${import.meta.env.VITE_LEETPUSH_API_URL}/${leetCodeUsername}`)
-        if (!response.ok) {
-          if (response.status === 429) {
-            throw new Error('Too Many Requests, please try again later')
-          } else {
-            throw new Error('Failed to fetch user statistics')
-          }
-        }
-
-        const data: UserStatsI = await response.json()
-        if (!data.data.acSubmissionNum) {
-          throw new Error('User not found. Please check the user details.')
-        }
-
-        setUserStats(data)
-      } catch (err: any) {
-        setError(err.message)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchStats()
-  }, [leetCodeUsername])
-
-  if (isLoading) return <Loader />
-  if (error || !userStats) return <div className="text-lp-red font-semibold mb-4">{error}</div>
+  if (isLoading) return false
+  if (error) return <div className="text-lp-red font-semibold mb-4">{error.message}</div>
+  if (!userStats) return (
+    <div className="text-lp-red font-semibold mb-4">
+      User not found
+    </div>
+  )
 
   const stats: UStatsI = userStats.data
   const easyPercentage: number = (stats.acSubmissionNum[1].count / stats.acSubmissionNum[0].count) * 100
