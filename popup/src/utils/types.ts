@@ -36,3 +36,11 @@ export interface UStatsI {
     count: number
   }[]
 }
+
+export interface SubmissionCalendar {
+  streak: number
+  totalActiveDays: number
+  submissionCalendar: {
+    [date: string]: number
+  }
+}
