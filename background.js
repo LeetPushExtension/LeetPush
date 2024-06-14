@@ -87,7 +87,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
             commitMsg = `[${probNum}] [Time Beats: ${queryRuntimeText}] - LeetPush`
             await sessionStorage.setItem('commitMsg', commitMsg)
           } else {
-            [runtime, memory] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold')
+            [timeMS, runtime, memoryMB, memory] = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(2) > span.font-semibold')
             if (runtime && memory) {
               runtimeText = runtime.innerText
               memoryText = memory.innerText
