@@ -81,7 +81,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
           /** Select the mem&runtime ********************************/
           let runtime, memory, queryRuntime
           if (dbs.includes(solutionLangText)) {
-            queryRuntime = document.querySelector('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(3) > span.font-semibold')
+            queryRuntime = document.querySelectorAll('div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(2) > span.font-semibold')[1]
             if (queryRuntime) queryRuntimeText = queryRuntime.innerText
             /** Generate a commit message *****************************/
             commitMsg = `[${probNum}] [Time Beats: ${queryRuntimeText}] - LeetPush`
