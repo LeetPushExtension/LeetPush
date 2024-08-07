@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { format, fromUnixTime } from 'date-fns'
-import { SubmissionArray } from '@/types/profileCalendar.interface'
+import { Submission } from '@/types/profileCalendar.interface'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -30,7 +30,7 @@ export const formatDate = (timestamp: number) =>
  */
 export const createFullSubmissionArray = (
   submissionCalendar: string,
-): SubmissionArray[] => {
+): Submission[] => {
   const submissionCalendarObj = JSON.parse(submissionCalendar)
   const submissionCalendarArray = Object.entries(submissionCalendarObj).map(
     ([key, value]) => {

@@ -1,7 +1,7 @@
 export interface ProfileCalendar {
   maxStreak: number
   totalActiveDays: number
-  fullSubmissionArray: SubmissionArray[]
+  fullSubmissionArray: Submission[]
 }
 
 export interface ProfileCalendarI {
@@ -16,7 +16,7 @@ export interface ProfileCalendarI {
   }
 }
 
-export interface SubmissionArray {
+export interface Submission {
   date: string
   value: number
 }
