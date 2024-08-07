@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 
 import './globals.css'
 import Links from '@/components/Links'
+import Footer from '@/components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-[#09090b] px-4 py-5 text-stone-100`}>
         <Links />
         {children}
+        <Footer />
       </body>
     </html>
   )
