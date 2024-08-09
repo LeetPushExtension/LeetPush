@@ -1,4 +1,4 @@
-import Welcome from '@/ui/Welcome.tsx'
+import Welcome from '@/components/Welcome.tsx'
 
 export default function LeetCode() {
   return (

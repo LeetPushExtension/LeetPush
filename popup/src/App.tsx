@@ -1,6 +1,6 @@
-import Links from '@/ui/Links.tsx'
-import Logo from '@/ui/Logo.tsx'
-import LeetCode from '@/ui/LeetCode.tsx'
+import Links from '@/components/Links.tsx'
+import Logo from '@/components/Logo.tsx'
+import LeetCode from '@/components/LeetCode.tsx'
 
 export default function App() {
   return (
