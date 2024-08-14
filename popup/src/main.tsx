@@ -4,8 +4,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import App from './components/App.tsx'
-import './index.css'
 import UserProvider from '@/context/userContext.tsx'
+import './index.css'
 
 const queryClient = new QueryClient()
 

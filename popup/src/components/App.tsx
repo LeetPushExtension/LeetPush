@@ -11,7 +11,7 @@ export default function App() {
   const { username } = useContext(UserContext)
 
   return (
-    <main className="h-screen w-full overflow-x-scroll space-y-4 bg-stone-900 px-4 py-5 text-stone-100">
+    <main className="space-y-1 bg-stone-900 px-4 py-5 text-stone-100">
       <Links />
       <Logo />
       {username ? (

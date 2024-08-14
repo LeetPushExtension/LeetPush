@@ -24,11 +24,11 @@ export default function Streak({ data }: { data: UserStreakI }) {
            ref={endRef}>
         {streakArray.map((entry, i) => (
           <div key={i}
-               className="flex-col flex justify-between gap-2 min-w-[91px] scrollbar-hidden">
-            <div className="grid grid-cols-5 gap-1">
+               className="flex-col flex justify-between gap-1 min-w-[91px] scrollbar-hidden">
+            <div className="grid grid-cols-5 gap-y-1 gap-x-0.5">
               {entry.days.map((daysEntry, i) => (
                 <div key={i}
-                     className="h-[15px] w-[15px] m-auto rounded-[0.175rem] bg-red-700"
+                     className="h-[14px] w-[14px] rounded-[0.175rem] bg-red-700"
                      style={{ backgroundColor: getDayColor(daysEntry.value) }} />
               ))}
             </div>
