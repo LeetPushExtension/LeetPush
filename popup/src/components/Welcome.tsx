@@ -1,7 +1,13 @@
-export default function Welcome() {
+export default function Welcome({ username }: { username: string }) {
   return (
-    <p className="text-lp-greyer pl-6 text-xl font-semibold">
-      Hi, <span className="text-lp-white">Hüsam</span>
-    </p>
+    <div className="flex items-center justify-between px-6">
+      <p className="text-lp-greyer text-lg font-semibold">
+        Hi, <span className="text-lp-white">{username}</span>
+      </p>
+
+      <p className="text-lp-greyer">
+        Total Solved: <span className="text-lp-white underline">189</span>
+      </p>
+    </div>
   )
 }
