@@ -40,11 +40,10 @@ export default function LeetCode() {
 
   const isLoading = isDailyProblemLoading || isUserStatsLoading || isUserStreakLoadin
   const error = dailyProblemError || userStatsError || userStreakError
+  const totalProblems = userStatsData?.acSubmissionNum[0]?.count
 
   return (
     <div className="space-y-4">
-      <Welcome username={username} />
-
       {isLoading
         ? <Spinner />
         : error ? (
@@ -53,6 +52,8 @@ export default function LeetCode() {
           </div>
         ) : (
           <div className="space-y-5">
+            <Welcome username={username}
+                     totalProblems={totalProblems} />
             <Stats data={userStatsData ?? {} as UserStatsI} />
             <Streak data={userStreakData ?? {} as UserStreakI} />
             <Daily data={dailyProblemData ?? {} as DailyProblemI} />

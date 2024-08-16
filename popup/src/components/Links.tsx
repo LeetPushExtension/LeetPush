@@ -5,6 +5,7 @@ export default function Links() {
     <div className="flex items-center justify-end gap-2">
       {LINKS.map(({ link, icon }) => (
         <a href={link}
+           key={link}
            target="_blank"
            className="hover:scale-125 transition-transform duration-300 ease-in-out"
         >
