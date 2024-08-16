@@ -17,7 +17,7 @@ export default function Streak({ data }: { data: UserStreakI }) {
     <div className="">
       <p className="font-medium text-center text-sm mb-3">
         Your Max
-        Streak: <span className="font-semibold underline">96</span> {streakEmoji(96)}
+        Streak: <span className="font-semibold underline">{data.maxStreak}</span> {streakEmoji(96)}
       </p>
 
       <div className="flex gap-4 overflow-x-scroll scrollbar-hidden"
