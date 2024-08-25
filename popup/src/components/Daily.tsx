@@ -12,6 +12,7 @@ export default function Daily({ data }: { data: DailyProblemI }) {
             <p className="font-medium text-xs text-lp-grey">Daily
               Problem</p>
             <a
+              target="_blank"
               href={`https://leetcode.com${data.link}`}
               rel="noreferrer"
               className="text-sm font-medium underline transition-colors duration-200 hover:text-blue-500"
