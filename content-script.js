@@ -326,11 +326,11 @@
       <form id="lp-form">
         <div class="lp-div">
           <label>Repository URL:</label>
-          <input type="text" id="repo-url" name="repo-url" required>
+          <input type="text" id="repo-url" name="repo-url" placeholder="https://github.com/username/repository" required>
         </div>
         <div class="lp-div">
           <label>Token: <a href="https://scribehow.com/shared/Generating_a_personal_access_token_on_GitHub__PUPxxuxIRQmlg1MUE-2zig" target="_blank">Generate Token?</a></label>
-          <input type="text" id="token" name="token" required>
+          <input type="text" id="token" name="token" placeholder="github_pat_..." required>
         </div>
         <div class="lp-div">
           <label>Target directory push:</label>
@@ -432,6 +432,19 @@
 
     if (!repoUrlInput || !tokenInput || !branchInput || !separateFolderInput) return
 
+    // Validate GitHub URL format
+    const githubUrlPattern = /^https:\/\/github\.com\/[\w-]+\/[\w.-]+$/
+    if (!githubUrlPattern.test(repoUrlInput.value)) {
+      alert('Please enter a valid GitHub repository URL (https://github.com/username/repository).')
+      return
+    }
+
+    // Validate GitHub token (basic format check)
+    if (!tokenInput.value.startsWith('ghp_') && !tokenInput.value.startsWith('github_pat_')) {
+      alert('Please enter a valid GitHub token. It should start with "ghp_" or "github_pat_".')
+      return
+    }
+
     const repoUrl = repoUrlInput.value.endsWith('.git') ? repoUrlInput.value.slice(0, -4) : repoUrlInput.value
     const token = tokenInput.value
     const branch = branchInput.value
@@ -462,7 +475,12 @@
     document.body.removeChild(modal)
 
     // Update README and description
-    await updateRepoMetadata(token, repoUrl, branch)
+    try {
+      await updateRepoMetadata(token, repoUrl, branch)
+    } catch (error) {
+      console.error('Error setting up repository metadata:', error)
+      showError('Initial repository setup failed. You may need to check your repository permissions.')
+    }
   }
 
   function updateButtonLabels() {
@@ -509,6 +527,11 @@
     document.body.appendChild(modal)
   }
 
+  // Function to show error messages to the user
+  function showError(message) {
+    alert(`LeetPush Error: ${message}`)
+  }
+
 // GitHub API interactions
   async function handlePushClick() {
     const config = getGithubConfig()
@@ -521,6 +544,7 @@
     const pushBtn = getPushButton()
     if (!pushBtn) {
       console.error('Push button not found')
+      showError('Interface error: Push button not found. Please refresh the page and try again.')
       return
     }
 
@@ -528,7 +552,7 @@
     const problemInfo = await extractProblemInfo()
     if (!problemInfo) {
       console.error('Failed to extract problem info')
-      alert('Failed to extract problem information. Please try again.')
+      showError('Failed to extract problem information. This may happen if the page structure has changed or if you\'re not on a solution page.')
       return
     }
 
@@ -542,14 +566,22 @@
         hasSolution: !!solution,
         hasCommitMsg: !!commitMsg,
       })
-      alert('Missing required data. Please try again.')
+
+      if (!fileName) {
+        showError('Failed to generate a valid file name for your solution.')
+      } else if (!solution) {
+        showError('Failed to extract your solution code. Please try again.')
+      } else {
+        showError('Failed to generate commit message. Please try again.')
+      }
       return
     }
 
     const [userName, repoName] = config.repo.split('/').slice(3, 5)
     if (!userName || !repoName) {
       console.error('Invalid repository URL:', config.repo)
-      alert('Invalid repository URL. Please check your settings.')
+      showError('Invalid repository URL format. Please check your settings and provide a valid GitHub repository URL (e.g., https://github.com/username/repository).')
+      showConfigModal()
       return
     }
 
@@ -577,11 +609,16 @@
       localStorage.setItem('solutions-pushed', solutionsPushed.toString())
 
       // Check if it's a daily challenge
-      const [, dailyProblemNum] = await getDailyChallenge()
+      try {
+        const [, dailyProblemNum] = await getDailyChallenge()
 
-      if (problemInfo && dailyProblemNum === problemInfo.probNum) {
-        const dailyChallenges = Number.parseInt(localStorage.getItem('daily-challenges') || '0') + 1
-        localStorage.setItem('daily-challenges', dailyChallenges.toString())
+        if (problemInfo && dailyProblemNum === problemInfo.probNum) {
+          const dailyChallenges = Number.parseInt(localStorage.getItem('daily-challenges') || '0') + 1
+          localStorage.setItem('daily-challenges', dailyChallenges.toString())
+        }
+      } catch (error) {
+        console.error('Error checking daily challenge:', error)
+        // Non-critical error, don't show to user
       }
     }
   }
@@ -624,13 +661,13 @@
       // Check if fileName is valid
       if (!fileName || fileName.trim() === '') {
         console.error('Invalid file name:', fileName)
-        throw new Error('Invalid file name. Please try again.')
+        throw new Error('Invalid file name. Please try again with a different solution.')
       }
 
       // Check if content is valid
       if (!content || content.trim() === '') {
         console.error('Invalid content:', content)
-        throw new Error('No solution content found. Please try again.')
+        throw new Error('No solution content found. Please make sure your solution is visible on the page.')
       }
 
       // Debug logs to track values
@@ -644,20 +681,25 @@
       if (customDir) {
         filePath = `${customDir}/${fileName}`
       } else if (separateFolder === 'yes') {
-        const [date, dailyProblemNum] = await getDailyChallenge()
-        const problemInfo = await extractProblemInfo()
+        try {
+          const [date, dailyProblemNum] = await getDailyChallenge()
+          const problemInfo = await extractProblemInfo()
 
-        if (problemInfo && dailyProblemNum === problemInfo.probNum) {
-          const splitDate = date.split('-')
-          const dailyFolder = `DCP-${splitDate[1]}-${splitDate[0].slice(2)}`
-          filePath = `${dailyFolder}/${fileName}`
+          if (problemInfo && dailyProblemNum === problemInfo.probNum) {
+            const splitDate = date.split('-')
+            const dailyFolder = `DCP-${splitDate[1]}-${splitDate[0].slice(2)}`
+            filePath = `${dailyFolder}/${fileName}`
+          }
+        } catch (error) {
+          console.error('Error processing daily challenge folder:', error)
+          // Continue without separate folder if there's an error
         }
       }
 
       // Ensure filePath is not empty
       if (!filePath || filePath.trim() === '') {
         console.error('Invalid file path:', filePath)
-        throw new Error('Invalid file path. Please try again.')
+        throw new Error('Failed to generate a valid file path. Please check your target directory settings.')
       }
 
       console.log('Debug - final filePath:', filePath)
@@ -665,7 +707,7 @@
       // Push file to repo
       const pushResult = await pushFileToRepo(userName, repoName, filePath, branch, content, commitMsg, token)
       if (pushResult) {
-        pushBtn.textContent = 'Done'
+        pushBtn.textContent = 'Done ✅'
         await sleep(2000)
         pushBtn.disabled = false
         pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
@@ -675,8 +717,8 @@
       }
     } catch (error) {
       console.error('Error pushing to GitHub:', error)
-      alert(`Error pushing to GitHub: ${error.message}`)
-      pushBtn.textContent = 'Error'
+      showError(error.message)
+      pushBtn.textContent = 'Error 🚨'
       await sleep(2000)
       pushBtn.disabled = false
       pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
@@ -691,7 +733,7 @@
         hasContent: !!content,
         hasCommitMsg: !!commitMsg,
       })
-      return false
+      throw new Error('Missing required file information. Please try again.')
     }
 
     const apiUrl = `${BASE_URL}/${userName}/${repoName}/contents/${filePath}`
@@ -707,7 +749,19 @@
       console.log('Repo check response:', repoCheckResponse)
 
       if (!repoCheckResponse.ok) {
-        throw new Error(`Repository not found: ${userName}/${repoName}`)
+        const errorData = await repoCheckResponse.json()
+        console.error('Repository check error:', errorData)
+
+        // Handle different error cases with specific messages
+        if (repoCheckResponse.status === 404) {
+          throw new Error(`Repository not found: ${userName}/${repoName}. Please check if the repository exists and your token has access to it.`)
+        } else if (repoCheckResponse.status === 401) {
+          throw new Error('Authentication failed. Your GitHub token may be invalid or expired. Please generate a new token.')
+        } else if (repoCheckResponse.status === 403) {
+          throw new Error('Access forbidden. Your token may not have sufficient permissions to access this repository.')
+        } else {
+          throw new Error(`Repository access error: ${errorData.message || 'Unknown error'}`)
+        }
       }
 
       // Prepare request body with proper content encoding
@@ -719,18 +773,41 @@
       }
 
       // Check if file exists and get the latest SHA
-      const fileExistsRes = await fetch(`${apiUrl}?ref=${branch}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      console.log('File exists response:', fileExistsRes)
+      let fileExistsRes
+      try {
+        fileExistsRes = await fetch(`${apiUrl}?ref=${branch}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        console.log('File exists response:', fileExistsRes)
+      } catch (error) {
+        console.error('Error checking if file exists:', error)
+        throw new Error('Network error while checking if file already exists in repository.')
+      }
 
       if (fileExistsRes.ok) {
-        const existingFileData = await fileExistsRes.json()
-        if (existingFileData && existingFileData.sha) {
-          requestBody.sha = existingFileData.sha
-          console.log('Found existing file SHA:', existingFileData.sha)
+        try {
+          const existingFileData = await fileExistsRes.json()
+          if (existingFileData && existingFileData.sha) {
+            requestBody.sha = existingFileData.sha
+            console.log('Found existing file SHA:', existingFileData.sha)
+          }
+        } catch (error) {
+          console.error('Error parsing existing file data:', error)
+          throw new Error('Error processing existing file data from GitHub.')
+        }
+      } else if (fileExistsRes.status !== 404) {
+        // 404 is expected if file doesn't exist yet
+        const errorData = await fileExistsRes.json()
+        console.error('Error checking file existence:', errorData)
+
+        if (fileExistsRes.status === 403) {
+          throw new Error('Permission denied. Make sure your token has "contents: write" permission on this repository.')
+        } else if (fileExistsRes.status === 401) {
+          throw new Error('Authentication failed. Your GitHub token may be invalid or expired.')
+        } else {
+          throw new Error(`Error checking file: ${errorData.message || 'Unknown error'}`)
         }
       }
 
