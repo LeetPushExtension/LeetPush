@@ -57,7 +57,42 @@
 
   const DATABASE_LANGUAGES = ['MySQL', 'Oracle', 'PostgreSQL', 'MS SQL Server', 'Pandas']
 
-// DOM Selectors
+  // Platform detection
+  const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+
+  // Default keyboard shortcuts based on platform
+  const DEFAULT_SHORTCUT = isMac ? { key: 'p', modifier: 'meta' } : {
+    key: 'p',
+    modifier: 'ctrl',
+  }
+
+  // Shortcut display text
+  const getShortcutDisplayText = (shortcut) => {
+    const modifierSymbol = shortcut.modifier === 'meta' ? '⌘' :
+      shortcut.modifier === 'alt' ? '⌥' :
+        shortcut.modifier === 'shift' ? '⇧' :
+          shortcut.modifier === 'ctrl' ? 'Ctrl+' : ''
+    return `${modifierSymbol}${shortcut.key.toUpperCase()}`
+  }
+
+  // Get keyboard shortcut from localStorage or use default
+  const getKeyboardShortcut = () => {
+    const savedShortcut = localStorage.getItem('keyboard-shortcut')
+    if (savedShortcut) {
+      try {
+        return JSON.parse(savedShortcut)
+      } catch (e) {
+        console.error('Error parsing saved shortcut:', e)
+        return DEFAULT_SHORTCUT
+      }
+    }
+    return DEFAULT_SHORTCUT
+  }
+
+  let KEYBOARD_SHORTCUT = getKeyboardShortcut()
+  let SHORTCUT_DISPLAY = getShortcutDisplayText(KEYBOARD_SHORTCUT)
+
+  // DOM Selectors
   const SELECTORS = {
     problemName: 'div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a',
     solutionLanguage:
@@ -81,6 +116,7 @@
     if (isSubmissionPage() && hasAcceptedSolution()) {
       injectButtons()
       extractProblemInfo()
+      registerKeyboardShortcut()
     }
   }
 
@@ -97,6 +133,22 @@
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
+// Register keyboard shortcut
+  function registerKeyboardShortcut() {
+    document.addEventListener('keydown', (event) => {
+      // Check if the shortcut matches the configured one
+      if ((KEYBOARD_SHORTCUT.modifier === 'meta' && event.metaKey) ||
+        (KEYBOARD_SHORTCUT.modifier === 'alt' && event.altKey) ||
+        (KEYBOARD_SHORTCUT.modifier === 'shift' && event.shiftKey) ||
+        (KEYBOARD_SHORTCUT.modifier === 'ctrl' && event.ctrlKey)) {
+        if (event.key.toLowerCase() === KEYBOARD_SHORTCUT.key.toLowerCase()) {
+          event.preventDefault()
+          handlePushClick()
+        }
+      }
+    })
+  }
+
 // Button injection
   function injectButtons() {
     const parentDiv = document.querySelector(SELECTORS.parentDiv)
@@ -110,7 +162,7 @@
         'Edit',
         'leetpush-div',
         'leetpush-btn',
-        'Push',
+        `Push (${SHORTCUT_DISPLAY})`,
       )
     }
 
@@ -122,7 +174,7 @@
         'Edit',
         'leetpush-div-CodeEditor',
         'leetpush-btn-CodeEditor',
-        'Push',
+        `Push (${SHORTCUT_DISPLAY})`,
       )
     }
   }
@@ -284,6 +336,19 @@
           <label>Target directory push:</label>
           <input type="text" id="custom-dir" name="custom-dir" placeholder="Leave empty to push to the root.">
         </div>
+        <div class="lp-keyboard-shortcut">
+          <label>Keyboard shortcut:</label>
+          <div class="shortcut-config">
+            <select id="shortcut-modifier">
+              <option value="meta">${isMac ? '⌘ Command' : '⊞ Windows'}</option>
+              <option value="ctrl">Ctrl</option>
+              <option value="alt">${isMac ? '⌥ Option' : 'Alt'}</option>
+              <option value="shift">⇧ Shift</option>
+            </select>
+            <span>+</span>
+            <input type="text" id="shortcut-key" maxlength="1" placeholder="Key">
+          </div>
+        </div>
         <div class="lp-daily-challenge">
           <label>Daily problems on a separate folder:</label>
           <div id="lp-radios">
@@ -313,11 +378,33 @@
         <button id="lp-submit-btn" type="submit">Submit</button>
       </form>
     </div>
+    <style>
+      .shortcut-config {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      #shortcut-key {
+        width: 40px;
+        text-align: center;
+        text-transform: uppercase;
+      }
+      #shortcut-modifier {
+        min-width: 120px;
+      }
+    </style>
   `
 
     // Add event listeners
     modal.querySelector('#lp-close-btn button')?.addEventListener('click', () => {
       document.body.removeChild(modal)
+    })
+
+    // Close modal when clicking outside the modal container
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        document.body.removeChild(modal)
+      }
     })
 
     document.addEventListener('keydown', (event) => {
@@ -340,6 +427,8 @@
     const branchInput = modal.querySelector('input[name="branch-name"]:checked')
     const separateFolderInput = modal.querySelector('input[name="daily-challenge"]:checked')
     const customDirInput = modal.querySelector('#custom-dir')
+    const shortcutModifierInput = modal.querySelector('#shortcut-modifier')
+    const shortcutKeyInput = modal.querySelector('#shortcut-key')
 
     if (!repoUrlInput || !tokenInput || !branchInput || !separateFolderInput) return
 
@@ -348,6 +437,20 @@
     const branch = branchInput.value
     const separateFolder = separateFolderInput.value
     const customDir = customDirInput?.value || ''
+
+    // Save shortcut if provided
+    if (shortcutModifierInput && shortcutKeyInput && shortcutKeyInput.value) {
+      const shortcutKey = shortcutKeyInput.value.toLowerCase()
+      const shortcutModifier = shortcutModifierInput.value
+
+      KEYBOARD_SHORTCUT = { key: shortcutKey, modifier: shortcutModifier }
+      SHORTCUT_DISPLAY = getShortcutDisplayText(KEYBOARD_SHORTCUT)
+
+      localStorage.setItem('keyboard-shortcut', JSON.stringify(KEYBOARD_SHORTCUT))
+
+      // Update button labels with new shortcut
+      updateButtonLabels()
+    }
 
     // Save to localStorage
     localStorage.setItem('repo', repoUrl)
@@ -362,6 +465,19 @@
     await updateRepoMetadata(token, repoUrl, branch)
   }
 
+  function updateButtonLabels() {
+    const buttons = [
+      document.querySelector('#leetpush-btn'),
+      document.querySelector('#leetpush-btn-CodeEditor'),
+    ]
+
+    buttons.forEach(button => {
+      if (button) {
+        button.textContent = `Push (${SHORTCUT_DISPLAY})`
+      }
+    })
+  }
+
   function showConfigModal() {
     const modal = createConfigModal()
 
@@ -371,6 +487,18 @@
     const branch = localStorage.getItem('branch')
     const separateFolder = localStorage.getItem('separate-folder')
     const customDir = localStorage.getItem('custom-dir')
+
+    // Pre-fill shortcut values
+    const shortcutModifierInput = modal.querySelector('#shortcut-modifier')
+    const shortcutKeyInput = modal.querySelector('#shortcut-key')
+
+    if (shortcutModifierInput) {
+      shortcutModifierInput.value = KEYBOARD_SHORTCUT.modifier
+    }
+
+    if (shortcutKeyInput) {
+      shortcutKeyInput.value = KEYBOARD_SHORTCUT.key.toUpperCase()
+    }
 
     if (token) modal.querySelector('#token').value = token
     if (repo) modal.querySelector('#repo-url').value = repo
@@ -439,10 +567,10 @@
     )
 
     if (success) {
-      pushBtn.textContent = 'Done'
+      pushBtn.textContent = 'Done ✅'
       await sleep(2000)
       pushBtn.disabled = false
-      pushBtn.textContent = 'Push'
+      pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
 
       // Update statistics
       const solutionsPushed = Number.parseInt(localStorage.getItem('solutions-pushed') || '0') + 1
@@ -540,7 +668,7 @@
         pushBtn.textContent = 'Done'
         await sleep(2000)
         pushBtn.disabled = false
-        pushBtn.textContent = 'Push'
+        pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
         return true
       } else {
         throw new Error('Failed to push file to repository')
@@ -551,7 +679,7 @@
       pushBtn.textContent = 'Error'
       await sleep(2000)
       pushBtn.disabled = false
-      pushBtn.textContent = 'Push'
+      pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
       return false
     }
   }
@@ -582,14 +710,6 @@
         throw new Error(`Repository not found: ${userName}/${repoName}`)
       }
 
-      // Check if file exists
-      const fileExistsRes = await fetch(`${apiUrl}?ref=${branch}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      console.log('File exists response:', fileExistsRes)
-
       // Prepare request body with proper content encoding
       const encodedContent = btoa(unescape(encodeURIComponent(content)))
       const requestBody = {
@@ -597,7 +717,14 @@
         content: encodedContent,
         branch: branch,
       }
-      console.log('Request body content length:', encodedContent.length)
+
+      // Check if file exists and get the latest SHA
+      const fileExistsRes = await fetch(`${apiUrl}?ref=${branch}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      console.log('File exists response:', fileExistsRes)
 
       if (fileExistsRes.ok) {
         const existingFileData = await fileExistsRes.json()
@@ -607,9 +734,8 @@
         }
       }
 
-      console.log('Final request body prepared')
-
-      const response = await fetch(apiUrl, {
+      // Make the API call to push the file
+      let response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -618,6 +744,37 @@
         body: JSON.stringify(requestBody),
       })
       console.log('Response status:', response.status)
+
+      // Handle SHA mismatch (409 conflict) error
+      if (response.status === 409) {
+        console.log('SHA mismatch detected, fetching updated SHA and retrying...')
+
+        // Get the latest SHA again
+        const latestShaRes = await fetch(`${apiUrl}?ref=${branch}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (latestShaRes.ok) {
+          const latestFileData = await latestShaRes.json()
+          if (latestFileData && latestFileData.sha) {
+            // Update the SHA in the request body
+            requestBody.sha = latestFileData.sha
+
+            // Retry the request with the updated SHA
+            response = await fetch(apiUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(requestBody),
+            })
+            console.log('Retry response status:', response.status)
+          }
+        }
+      }
 
       if (!response.ok) {
         const errorData = await response.json()
