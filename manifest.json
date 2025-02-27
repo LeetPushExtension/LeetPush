@@ -1,18 +1,28 @@
 {
 	"manifest_version": 3,
 	"name": "LeetPush",
-	"version": "1.6.23",
+	"version": "1.7.0",
 	"description": "Effortlessly capture and push LeetCode solutions to your GitHub repository",
 	"background": {
-		"service_worker": "background.js"
+		"service_worker": "background.js",
+		"type": "module"
 	},
 	"action": {
-		"default_popup": "dist/index.html"
+		"default_popup": "dist/index.html",
+		"default_icon": {
+			"16": "images/icon-16.png",
+			"32": "images/icon-32.png",
+			"64": "images/icon-64.png",
+			"128": "images/icon-128.png"
+		}
 	},
 	"content_scripts": [
 		{
 			"matches": [
 				"https://*.leetcode.com/*"
+			],
+			"js": [
+				"content-script.js"
 			],
 			"css": [
 				"style.css"
@@ -20,15 +30,17 @@
 		}
 	],
 	"permissions": [
-		"scripting"
+		"scripting",
+		"storage"
+	],
+	"host_permissions": [
+		"https://*.leetcode.com/*",
+		"https://api.github.com/*"
 	],
 	"icons": {
 		"16": "images/icon-16.png",
 		"32": "images/icon-32.png",
 		"64": "images/icon-64.png",
 		"128": "images/icon-128.png"
-	},
-	"host_permissions": [
-		"https://*.leetcode.com/*"
-	]
+	}
 }
