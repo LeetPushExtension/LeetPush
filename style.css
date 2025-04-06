@@ -6,46 +6,67 @@
 	display: flex;
 	align-items: center;
 	text-align: center;
-	margin-left: 0.5rem;
-	border-radius: 0.5rem;
 	font-size: 13px;
-	transition: background-color 0.2s ease;
+	transition: all 0.2s ease;
 }
 
 /* Push button styles */
 #leetpush-div,
 #leetpush-div-CodeEditor {
-	background-color: #e7a41e;
+	background-color: transparent;
+	border: none;
+	position: relative;
 }
 
 #leetpush-div:hover,
 #leetpush-div-CodeEditor:hover {
-	background-color: #e2b65c;
+	background-color: rgba(231, 164, 30, 0.1);
 }
 
 #leetpush-btn,
 #leetpush-btn-CodeEditor {
 	line-height: 18px;
 	font-weight: 600;
-	padding-inline: 1.25rem;
+	padding-inline: 1rem;
 	padding-block: 0.375rem;
 	user-select: none;
 	height: 32px;
-	color: #070706;
+	color: #e7a41e;
 	cursor: pointer;
 	border: none;
 	background: transparent;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#leetpush-btn::before,
+#leetpush-btn-CodeEditor::before {
+	content: "";
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='%23e7a41e'%3E%3Cpath d='M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z'%3E%3C/path%3E%3C/svg%3E");
+	background-size: cover;
 }
 
 /* Edit button styles */
 #leetpush-div-edit,
 #leetpush-div-edit-CodeEditor {
-	background-color: rgb(26 26 26);
+	background-color: transparent;
+	border: none;
+	position: relative;
+}
+
+/* Remove divider between buttons - will be added via HTML */
+#leetpush-div-edit::after,
+#leetpush-div-edit-CodeEditor::after {
+	display: none;
 }
 
 #leetpush-div-edit:hover,
 #leetpush-div-edit-CodeEditor:hover {
-	background-color: rgba(26, 26, 26, 0.8);
+	background-color: rgba(255, 255, 255, 0.05);
 }
 
 #leetpush-btn-edit,
@@ -53,7 +74,7 @@
 	line-height: 18px;
 	font-weight: 600;
 	font-size: 13px;
-	padding-inline: 1.25rem;
+	padding-inline: 1rem;
 	padding-block: 0.25rem;
 	user-select: none;
 	height: 32px;
@@ -61,6 +82,19 @@
 	cursor: pointer;
 	border: none;
 	background: transparent;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#leetpush-btn-edit::before,
+#leetpush-btn-edit-CodeEditor::before {
+	content: "";
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='rgba(255, 255, 255, 0.8)'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'%3E%3C/path%3E%3C/svg%3E");
+	background-size: cover;
 }
 
 /* Disabled button state */
@@ -68,8 +102,36 @@
 #leetpush-btn-CodeEditor:disabled,
 #leetpush-btn-edit:disabled,
 #leetpush-btn-edit-CodeEditor:disabled {
-	opacity: 0.7;
+	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+/* Different states for buttons */
+#leetpush-btn.loading::before,
+#leetpush-btn-CodeEditor.loading::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e7a41e'%3E%3Cpath d='M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8Z'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 12 12' to='360 12 12' dur='1s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+
+#leetpush-btn.error::before,
+#leetpush-btn-CodeEditor.error::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e74c3c'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Success state with checkmark on the right */
+#leetpush-btn.success,
+#leetpush-btn-CodeEditor.success {
+	position: relative;
+	color: #2ecc71;
+}
+
+#leetpush-btn.success::before,
+#leetpush-btn-CodeEditor.success::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='%232ecc71'%3E%3Cpath d='M15,3C8.373,3,3,8.373,3,15c0,5.623,3.872,10.328,9.092,11.63C12.036,26.468,12,26.28,12,26.047v-2.051 c-0.487,0-1.303,0-1.508,0c-0.821,0-1.551-0.353-1.905-1.009c-0.393-0.729-0.461-1.844-1.435-2.526 c-0.289-0.227-0.069-0.486,0.264-0.451c0.615,0.174,1.125,0.596,1.605,1.222c0.478,0.627,0.703,0.769,1.596,0.769 c0.433,0,1.081-0.025,1.691-0.121c0.328-0.833,0.895-1.6,1.588-1.962c-3.996-0.411-5.903-2.399-5.903-5.098 c0-1.162,0.495-2.286,1.336-3.233C9.053,10.647,8.706,8.73,9.435,8c1.798,0,2.885,1.166,3.146,1.481C13.477,9.174,14.461,9,15.495,9 c1.036,0,2.024,0.174,2.922,0.483C18.675,9.17,19.763,8,21.565,8c0.732,0.731,0.381,2.656,0.102,3.594 c0.836,0.945,1.328,2.066,1.328,3.226c0,2.697-1.904,4.684-5.894,5.097C18.199,20.49,19,22.1,19,23.313v2.734 c0,0.104-0.023,0.179-0.035,0.268C23.641,24.676,27,20.236,27,15C27,8.373,21.627,3,15,3z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+#leetpush-btn.success::after,
+#leetpush-btn-CodeEditor.success::after {
+	display: none;
 }
 
 /** LeetPush Modal **/
