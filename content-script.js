@@ -1,5 +1,5 @@
-(function() {
-// Constants
+(function () {
+  // Constants
   const BASE_URL = 'https://api.github.com/repos'
   const FILE_EXTENSIONS = {
     C: '.c',
@@ -108,7 +108,7 @@
       'div.flex.items-center.justify-between.gap-2 > div > div.rounded-sd.flex.min-w-\\[275px\\].flex-1.cursor-pointer.flex-col.px-4.py-3.text-xs > div:nth-child(2) > span.font-semibold',
   }
 
-// Main initialization
+  // Main initialization
   document.addEventListener('DOMContentLoaded', initLeetPush)
 
   function initLeetPush() {
@@ -120,7 +120,7 @@
     }
   }
 
-// Helper functions
+  // Helper functions
   function isSubmissionPage() {
     return window.location.href.includes('submissions')
   }
@@ -133,7 +133,7 @@
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
-// Register keyboard shortcut
+  // Register keyboard shortcut
   function registerKeyboardShortcut() {
     document.addEventListener('keydown', (event) => {
       // Check if the shortcut matches the configured one
@@ -149,7 +149,7 @@
     })
   }
 
-// Button injection
+  // Button injection
   function injectButtons() {
     const parentDiv = document.querySelector(SELECTORS.parentDiv)
     const parentDivCodeEditor = document.querySelector(SELECTORS.parentDivCodeEditor)
@@ -198,9 +198,24 @@
       handlePushClick()
     })
 
+    // Create divider elements
+    const divider1 = document.createElement('div')
+    divider1.style.backgroundColor = '#0f0f0f'
+    divider1.style.width = '1px'
+    divider1.style.height = '100%'
+    divider1.style.flexShrink = '0'
+
+    const divider2 = document.createElement('div')
+    divider2.style.backgroundColor = '#0f0f0f'
+    divider2.style.width = '1px'
+    divider2.style.height = '100%'
+    divider2.style.flexShrink = '0'
+
     const pushButton = createButton(pushContainerId, pushButtonId, pushText, handlePushClick)
 
+    parent.appendChild(divider1)
     parent.appendChild(editButton)
+    parent.appendChild(divider2)
     parent.appendChild(pushButton)
   }
 
@@ -217,7 +232,7 @@
     return container
   }
 
-// Problem info extraction
+  // Problem info extraction
   async function extractProblemInfo() {
     try {
       const probNameElement = document.querySelector(SELECTORS.problemName)
@@ -315,7 +330,7 @@
     }
   }
 
-// Modal creation and handling
+  // Modal creation and handling
   function createConfigModal() {
     const modal = document.createElement('div')
     modal.id = 'lp-modal'
@@ -532,7 +547,7 @@
     alert(`LeetPush Error: ${message}`)
   }
 
-// GitHub API interactions
+  // GitHub API interactions
   async function handlePushClick() {
     const config = getGithubConfig()
 
@@ -585,23 +600,29 @@
       return
     }
 
-    const success = await pushToGithub(
-      pushBtn,
-      userName,
-      repoName,
-      config.branch,
-      fileName,
-      solution,
-      commitMsg,
-      config.token,
-      config.separateFolder,
-      config.customDir,
-    )
+    pushBtn.disabled = true
+    pushBtn.textContent = 'Loading...'
+    pushBtn.classList.add('loading')
 
-    if (success) {
-      pushBtn.textContent = 'Done ✅'
+    try {
+      const result = await pushToGithub(
+        userName,
+        repoName,
+        config.branch,
+        fileName,
+        solution,
+        commitMsg,
+        config.token,
+        config.separateFolder,
+        config.customDir,
+      )
+
+      pushBtn.classList.remove('loading')
+      pushBtn.classList.add('success')
+      pushBtn.textContent = 'Done'
       await sleep(2000)
       pushBtn.disabled = false
+      pushBtn.classList.remove('success')
       pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
 
       // Update statistics
@@ -620,6 +641,17 @@
         console.error('Error checking daily challenge:', error)
         // Non-critical error, don't show to user
       }
+    } catch (error) {
+      console.error('Failed to push solution:', error)
+      showError(error.message || 'Unknown error occurred while pushing solution')
+
+      pushBtn.classList.remove('loading')
+      pushBtn.classList.add('error')
+      pushBtn.textContent = 'Error'
+      await sleep(2000)
+      pushBtn.disabled = false
+      pushBtn.classList.remove('error')
+      pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
     }
   }
 
@@ -642,7 +674,6 @@
   }
 
   async function pushToGithub(
-    pushBtn,
     userName,
     repoName,
     branch,
@@ -653,10 +684,6 @@
     separateFolder,
     customDir,
   ) {
-    pushBtn.disabled = true
-    pushBtn.textContent = 'Loading...'
-    await sleep(1000)
-
     try {
       // Check if fileName is valid
       if (!fileName || fileName.trim() === '') {
@@ -705,24 +732,10 @@
       console.log('Debug - final filePath:', filePath)
 
       // Push file to repo
-      const pushResult = await pushFileToRepo(userName, repoName, filePath, branch, content, commitMsg, token)
-      if (pushResult) {
-        pushBtn.textContent = 'Done ✅'
-        await sleep(2000)
-        pushBtn.disabled = false
-        pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
-        return true
-      } else {
-        throw new Error('Failed to push file to repository')
-      }
+      return await pushFileToRepo(userName, repoName, filePath, branch, content, commitMsg, token)
     } catch (error) {
-      console.error('Error pushing to GitHub:', error)
-      showError(error.message)
-      pushBtn.textContent = 'Error 🚨'
-      await sleep(2000)
-      pushBtn.disabled = false
-      pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
-      return false
+      console.error('Error in pushToGithub:', error)
+      throw error; // Propagate the error to be handled by the caller
     }
   }
 
@@ -822,22 +835,32 @@
       })
       console.log('Response status:', response.status)
 
-      // Handle SHA mismatch (409 conflict) error
-      if (response.status === 409) {
-        console.log('SHA mismatch detected, fetching updated SHA and retrying...')
+      // Handle SHA mismatch (409 conflict) error - retry up to 3 times
+      let retryCount = 0;
+      const maxRetries = 3;
 
-        // Get the latest SHA again
-        const latestShaRes = await fetch(`${apiUrl}?ref=${branch}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      while (response.status === 409 && retryCount < maxRetries) {
+        console.log(`SHA mismatch detected (attempt ${retryCount + 1}/${maxRetries}), fetching updated SHA and retrying...`)
+        retryCount++;
 
-        if (latestShaRes.ok) {
+        try {
+          // Get the latest SHA again
+          const latestShaRes = await fetch(`${apiUrl}?ref=${branch}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+
+          if (!latestShaRes.ok) {
+            console.error(`Failed to get latest SHA on retry ${retryCount}, status: ${latestShaRes.status}`)
+            continue; // Skip to next retry attempt
+          }
+
           const latestFileData = await latestShaRes.json()
           if (latestFileData && latestFileData.sha) {
             // Update the SHA in the request body
             requestBody.sha = latestFileData.sha
+            console.log(`Using updated SHA on retry ${retryCount}: ${latestFileData.sha}`)
 
             // Retry the request with the updated SHA
             response = await fetch(apiUrl, {
@@ -848,14 +871,34 @@
               },
               body: JSON.stringify(requestBody),
             })
-            console.log('Retry response status:', response.status)
+            console.log(`Retry ${retryCount} response status:`, response.status)
+
+            if (response.ok) {
+              break; // Success, exit the retry loop
+            }
+          } else {
+            console.error('Failed to get valid SHA from response:', latestFileData)
+            break;
           }
+        } catch (retryError) {
+          console.error(`Error during retry ${retryCount}:`, retryError)
+          break; // Exit retry loop on error
         }
+
+        // Small delay between retries to avoid rate limiting
+        await sleep(500);
       }
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(`GitHub API Error: ${response.status} - ${errorData.message}`)
+        let errorMessage = `GitHub API Error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage += ` - ${errorData.message || 'Unknown error'}`;
+          console.error('GitHub API error details:', errorData);
+        } catch (jsonError) {
+          console.error('Failed to parse error response:', jsonError);
+        }
+        throw new Error(errorMessage);
       }
 
       const responseData = await response.json()
@@ -863,8 +906,8 @@
       return true
     } catch (error) {
       console.error('Error pushing file to repo:', error)
-      alert(`Failed to push file: ${error.message}`)
-      return false
+      // Don't show alert here, just propagate the error to be handled by the caller
+      throw error;
     }
   }
 
