@@ -491,7 +491,7 @@
 
     // Update README and description
     try {
-      await updateRepoMetadata(token, repoUrl, branch)
+      await updateRepoDescription(token, repoUrl, branch)
     } catch (error) {
       console.error('Error setting up repository metadata:', error)
       showError('Initial repository setup failed. You may need to check your repository permissions.')
@@ -911,54 +911,11 @@
     }
   }
 
-  async function updateRepoMetadata(token, repo, branch) {
+  async function updateRepoDescription(token, repo, branch) {
     const [userName, repoName] = repo.split('/').slice(3, 5)
-
     const description = 'This repository is managed by LeetPush extension: https://github.com/husamahmud/LeetPush'
-    const readmeContent =
-      '# LeetCode\n\nThis repository contains my solutions to LeetCode problems.\n\nCreated with :heart: by [LeetPush](https://github.com/husamahmud/LeetPush)\n\n ## Made by \n - Tut: [GitHub](https://github.com/TutTrue) - [LinkedIn](https://www.linkedin.com/in/mahmoud-hamdy-8b6825245/)\n - Hüsam: [GitHub](https://github.com/husamahmud) - [LinkedIn](https://www.linkedin.com/in/husamahmud/)\n\n Happy coding! 🚀'
 
     try {
-      // Update README
-      const readmeApiUrl = `${BASE_URL}/${userName}/${repoName}/contents/README.md`
-      const encodedReadmeContent = btoa(unescape(encodeURIComponent(readmeContent)))
-
-      const readmeExistsResponse = await fetch(`${readmeApiUrl}?ref=${branch}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-
-      if (readmeExistsResponse.ok) {
-        const existingReadme = await readmeExistsResponse.json()
-
-        await fetch(readmeApiUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            message: 'Update README file',
-            content: encodedReadmeContent,
-            sha: existingReadme.sha,
-            branch: branch,
-          }),
-        })
-      } else {
-        await fetch(readmeApiUrl, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            message: 'Create README file',
-            content: encodedReadmeContent,
-            branch: branch,
-          }),
-        })
-      }
-
-      // Update repo description
       await fetch(`${BASE_URL}/${userName}/${repoName}`, {
         method: 'PATCH',
         headers: {
