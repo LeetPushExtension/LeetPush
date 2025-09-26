@@ -931,7 +931,7 @@
 
   async function updateRepoDescription(token, repo, branch) {
     const [userName, repoName] = repo.split("/").slice(3, 5)
-    const description = "This repository is managed by LeetPush extension: https://github.com/husamahmud/LeetPush"
+    const description = "This repository is managed by LeetPush extension: https://github.com/LeetPushExtension/LeetPush"
 
     try {
       await fetch(`${BASE_URL}/${userName}/${repoName}`, {
