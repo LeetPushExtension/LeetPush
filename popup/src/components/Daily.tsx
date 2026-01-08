@@ -1,16 +1,15 @@
-import { Badge } from '@/components/ui/badge'
+import { Badge } from "@/components/ui/badge";
 
-import { getDifficultyColor } from '@/lib/utils.ts'
-import { DailyProblemI } from '@/types/leetpush.interface.ts'
+import { getDifficultyColor } from "@/lib/utils.ts";
+import { DailyProblemI } from "@/types/leetpush.interface.ts";
 
 export default function Daily({ data }: { data: DailyProblemI }) {
   return (
     <div>
       <div>
         <div className="flex flex-col gap-1">
-          <div className="flex gap-2 items-center">
-            <p className="font-medium text-xs text-lp-grey">Daily
-              Problem</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs font-medium text-lp-grey">Daily Problem</p>
             <a
               target="_blank"
               href={`https://leetcode.com${data.link}`}
@@ -21,7 +20,7 @@ export default function Daily({ data }: { data: DailyProblemI }) {
               {data.question.title}
             </a>
             <span
-              className={`text-sm font-semibold px-1.5 py-0.5 ${getDifficultyColor(data.question.difficulty as 'Easy' | 'Medium' | 'Hard')} rounded-md`}
+              className={`px-1.5 py-0.5 text-sm font-semibold ${getDifficultyColor(data.question.difficulty as "Easy" | "Medium" | "Hard")} rounded-md`}
             >
               {data.question.difficulty}
             </span>
@@ -29,8 +28,10 @@ export default function Daily({ data }: { data: DailyProblemI }) {
 
           <div className="flex gap-2">
             {data.question.topicTags.map((tag) => (
-              <Badge key={tag.name}
-                     className="rounded-lg text-lp-grey hover:bg-lp-greyer bg-lp-greyer font-normal">
+              <Badge
+                key={tag.name}
+                className="rounded-lg bg-lp-greyer font-normal text-lp-grey hover:bg-lp-greyer"
+              >
                 {tag.name}
               </Badge>
             ))}
@@ -38,5 +39,5 @@ export default function Daily({ data }: { data: DailyProblemI }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

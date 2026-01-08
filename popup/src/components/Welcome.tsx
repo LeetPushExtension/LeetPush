@@ -1,19 +1,19 @@
 interface WelcomeProps {
-  username: string
-  totalProblems: number | undefined
+  username: string;
+  totalProblems: number | undefined;
 }
 
 export default function Welcome({ username, totalProblems }: WelcomeProps) {
   return (
     <div className="flex items-center justify-between px-6">
-      <p className="text-lp-greyer text-lg font-semibold">
+      <p className="text-lg font-semibold text-lp-greyer">
         Hi, <span className="text-lp-white">{username}</span>
       </p>
 
       <p className="text-lp-greyer">
-        Total
-        Solved: <span className="text-lp-white underline">{totalProblems}</span>
+        Total Solved:{" "}
+        <span className="text-lp-white underline">{totalProblems}</span>
       </p>
     </div>
-  )
+  );
 }

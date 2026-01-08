@@ -1,35 +1,42 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 
-import { UserStreakI } from '@/types/leetpush.interface.ts'
-import { formatStreak, getDayColor, streakEmoji } from '@/lib/utils.ts'
+import { UserStreakI } from "@/types/leetpush.interface.ts";
+import { formatStreak, getDayColor, streakEmoji } from "@/lib/utils.ts";
 
 export default function Streak({ data }: { data: UserStreakI }) {
-  const endRef = useRef<HTMLDivElement>(null)
-  const streakArray = formatStreak(data.fullSubmissionArray)
+  const endRef = useRef<HTMLDivElement>(null);
+  const streakArray = formatStreak(data.fullSubmissionArray);
 
   useEffect(() => {
     if (endRef.current && streakArray.length > 0) {
-      endRef.current.scrollLeft = endRef.current.scrollWidth
+      endRef.current.scrollLeft = endRef.current.scrollWidth;
     }
-  }, [streakArray])
+  }, [streakArray]);
 
   return (
     <div className="">
-      <p className="font-medium text-center text-sm mb-3">
-        Your Max
-        Streak: <span className="font-semibold underline">{data.maxStreak}</span> {streakEmoji(96)}
+      <p className="mb-3 text-center text-sm font-medium">
+        Your Max Streak:{" "}
+        <span className="font-semibold underline">{data.maxStreak}</span>{" "}
+        {streakEmoji(96)}
       </p>
 
-      <div className="flex gap-4 overflow-x-scroll scrollbar-hidden"
-           ref={endRef}>
+      <div
+        className="scrollbar-hidden flex gap-4 overflow-x-scroll"
+        ref={endRef}
+      >
         {streakArray.map((entry, i) => (
-          <div key={i}
-               className="flex-col flex justify-between gap-1 min-w-[91px] scrollbar-hidden">
-            <div className="grid grid-cols-5 gap-y-1 gap-x-0.5">
+          <div
+            key={i}
+            className="scrollbar-hidden flex min-w-[91px] flex-col justify-between gap-1"
+          >
+            <div className="grid grid-cols-5 gap-x-0.5 gap-y-1">
               {entry.days.map((daysEntry, i) => (
-                <div key={i}
-                     className="h-[14px] w-[14px] rounded-[0.175rem] bg-red-700"
-                     style={{ backgroundColor: getDayColor(daysEntry.value) }} />
+                <div
+                  key={i}
+                  className="h-[14px] w-[14px] rounded-[0.175rem] bg-red-700"
+                  style={{ backgroundColor: getDayColor(daysEntry.value) }}
+                />
               ))}
             </div>
             <p className="text-center text-lp-grey">{entry.month}</p>
@@ -37,9 +44,8 @@ export default function Streak({ data }: { data: UserStreakI }) {
         ))}
       </div>
     </div>
-  )
+  );
 }
-
 
 //res.map(entry => {
 //   console.log(entry.month)
