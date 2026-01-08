@@ -26,8 +26,8 @@ export default function Stats({ data }: { data: UserStatsI }) {
     <div className="px flex w-full gap-6">
       <div className="flex flex-col justify-between gap-2">
         <p className="flex justify-between">
-          <span className="mr-2 text-lp-green">Easy</span>
-          <span className="text-sm text-lp-greyer">
+          <span className="text-lp-green mr-2">Easy</span>
+          <span className="text-lp-greyer text-sm">
             <span className="mr-1 text-base font-semibold text-white">
               {acSubmissions.easy}
             </span>
@@ -36,8 +36,8 @@ export default function Stats({ data }: { data: UserStatsI }) {
         </p>
 
         <p className="flex justify-between">
-          <span className="mr-2 text-lp-yellow">Medium</span>
-          <span className="text-sm text-lp-greyer">
+          <span className="text-lp-yellow mr-2">Medium</span>
+          <span className="text-lp-greyer text-sm">
             <span className="mr-1 text-base font-semibold text-white">
               {acSubmissions.medium}
             </span>
@@ -46,8 +46,8 @@ export default function Stats({ data }: { data: UserStatsI }) {
         </p>
 
         <p className="flex justify-between">
-          <span className="mr-2 text-lp-red">Hard</span>
-          <span className="text-sm text-lp-greyer">
+          <span className="text-lp-red mr-2">Hard</span>
+          <span className="text-lp-greyer text-sm">
             <span className="mr-1 text-base font-semibold text-white">
               {acSubmissions.hard}
             </span>
@@ -57,23 +57,23 @@ export default function Stats({ data }: { data: UserStatsI }) {
       </div>
 
       <div className="flex w-full flex-1 flex-col justify-between rounded-xl">
-        <div className="overflow-hidden rounded-xl bg-lp-green-dark">
+        <div className="bg-lp-green-dark overflow-hidden rounded-xl">
           <div
-            className="h-2.5 bg-lp-green"
+            className="bg-lp-green h-2.5"
             style={{ width: `${easyPercentage}%` }}
           />
         </div>
 
-        <div className="overflow-hidden rounded-xl bg-lp-yellow-dark">
+        <div className="bg-lp-yellow-dark overflow-hidden rounded-xl">
           <div
-            className="h-2.5 bg-lp-yellow"
+            className="bg-lp-yellow h-2.5"
             style={{ width: `${mediumPercentage}%` }}
           />
         </div>
 
-        <div className="overflow-hidden rounded-xl bg-lp-red-dark">
+        <div className="bg-lp-red-dark overflow-hidden rounded-xl">
           <div
-            className="h-2.5 bg-lp-red"
+            className="bg-lp-red h-2.5"
             style={{ width: `${hardPercentage}%` }}
           />
         </div>

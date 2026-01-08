@@ -6,7 +6,7 @@ interface WelcomeProps {
 export default function Welcome({ username, totalProblems }: WelcomeProps) {
   return (
     <div className="flex items-center justify-between px-6">
-      <p className="text-lg font-semibold text-lp-greyer">
+      <p className="text-lp-greyer text-lg font-semibold">
         Hi, <span className="text-lp-white">{username}</span>
       </p>
 

@@ -39,7 +39,7 @@ export default function Streak({ data }: { data: UserStreakI }) {
                 />
               ))}
             </div>
-            <p className="text-center text-lp-grey">{entry.month}</p>
+            <p className="text-lp-grey text-center">{entry.month}</p>
           </div>
         ))}
       </div>
