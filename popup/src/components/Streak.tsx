@@ -46,13 +46,3 @@ export default function Streak({ data }: { data: UserStreakI }) {
     </div>
   );
 }
-
-//res.map(entry => {
-//   console.log(entry.month)
-//
-//   entry.days.map(dayEntry => {
-//     console.log(dayEntry)
-//   })
-//
-//   console.log('---')
-// })
