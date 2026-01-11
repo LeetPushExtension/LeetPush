@@ -104,7 +104,7 @@
   const SELECTORS = {
     problemName: "div.flex.items-start.justify-between.gap-4 > div.flex.items-start.gap-2 > div > a",
     solutionLanguage:
-      "div.w-full.flex-1.overflow-y-auto > div > div:nth-child(3) > div.flex.items-center.justify-between.pb-2 > div",
+      "div.flex.h-full.flex-nowrap.items-center > div:nth-child(1) > button",
     accepted:
       "div.text-green-s.dark\\:text-dark-green-s.flex.flex-1.items-center.gap-2.text-\\[16px\\].font-medium.leading-6 > span",
     parentDiv:
@@ -280,7 +280,7 @@
       }
 
       // Get solution language
-      const langElement = document.querySelector(SELECTORS.solutionLanguage).childNodes[2]
+      const langElement = document.querySelector(SELECTORS.solutionLanguage)
       if (!langElement) {
         console.error("Language element not found")
         return null
