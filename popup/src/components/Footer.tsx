@@ -24,7 +24,7 @@ export default function Footer() {
         </span>
       </p>
 
-      <span className="text-lp-grey text-xs font-semibold">v1.7.3</span>
+      <span className="text-lp-grey text-xs font-semibold">v1.7.4</span>
     </footer>
   );
 }
