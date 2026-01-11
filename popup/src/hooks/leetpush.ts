@@ -1,32 +1,28 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from "@tanstack/react-query";
 
 import {
   fetchDailyProblem,
   fetchUserStats,
   fetchUserStreak,
-} from '@/lib/leetpush.api.ts'
+} from "@/lib/leetpush.api.ts";
 import {
   DailyProblemI,
   UserStatsI,
   UserStreakI,
-} from '@/types/leetpush.interface.ts'
+} from "@/types/leetpush.interface.ts";
 
 /**
  * useDailyProblem - Fetch the daily problem from the LeetPush API
  **/
 export function useDailyProblem() {
-  const {
-    data,
-    error,
-    isLoading,
-  } = useQuery<DailyProblemI, Error>({
-    queryKey: ['dailyProblem'],
+  const { data, error, isLoading } = useQuery<DailyProblemI, Error>({
+    queryKey: ["dailyProblem"],
     queryFn: fetchDailyProblem,
     staleTime: 24 * 60 * 60 * 1000,
     gcTime: 24 * 60 * 60 * 1000,
-  })
+  });
 
-  return { data, error, isLoading }
+  return { data, error, isLoading };
 }
 
 /**
@@ -34,16 +30,12 @@ export function useDailyProblem() {
  * @param username - The username of the user to fetch stats for
  **/
 export function useUserStats(username: string) {
-  const {
-    data,
-    error,
-    isLoading,
-  } = useQuery<UserStatsI, Error>({
-    queryKey: ['userStats', username],
+  const { data, error, isLoading } = useQuery<UserStatsI, Error>({
+    queryKey: ["userStats", username],
     queryFn: () => fetchUserStats(username),
-  })
+  });
 
-  return { data, error, isLoading }
+  return { data, error, isLoading };
 }
 
 /**
@@ -51,14 +43,10 @@ export function useUserStats(username: string) {
  * @param username - The username of the user to fetch streak for
  **/
 export function useUserStreak(username: string) {
-  const {
-    data,
-    error,
-    isLoading,
-  } = useQuery<UserStreakI, Error>({
-    queryKey: ['userStreak', username],
+  const { data, error, isLoading } = useQuery<UserStreakI, Error>({
+    queryKey: ["userStreak", username],
     queryFn: () => fetchUserStreak(username),
-  })
+  });
 
-  return { data, error, isLoading }
+  return { data, error, isLoading };
 }

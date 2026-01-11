@@ -6,5 +6,5 @@ export default function Logo() {
         Leet<span className="text-lp-yellow">Push</span>
       </h1>
     </div>
-  )
+  );
 }

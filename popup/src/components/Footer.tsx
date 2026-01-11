@@ -1,4 +1,4 @@
-import { FaXTwitter, FaLinkedinIn } from 'react-icons/fa6'
+import { FaXTwitter, FaLinkedinIn } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -7,13 +7,18 @@ export default function Footer() {
         &copy; {new Date().getFullYear()}
         <span className="ml-1 flex items-center font-semibold text-lp-grey">
           Hüsam
-          <a href="https://twitter.com/husamahmud" target="_blank" className="ml-1">
+          <a
+            href="https://twitter.com/husamahmud"
+            target="_blank"
+            className="ml-1"
+          >
             <FaXTwitter size="16" />
           </a>
           <a
             href="https://www.linkedin.com/in/husamahmud/"
             target="_blank"
-            className="ml-1">
+            className="ml-1"
+          >
             <FaLinkedinIn size="16" />
           </a>
         </span>
@@ -21,5 +26,5 @@ export default function Footer() {
 
       <span className="text-xs font-semibold text-lp-grey">v1.7.3</span>
     </footer>
-  )
+  );
 }
