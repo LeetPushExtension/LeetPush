@@ -5,17 +5,15 @@ import Stats from "@/components/Stats.tsx";
 import Streak from "@/components/Streak.tsx";
 
 import {
-  useDailyProblem,
-  useUserStats,
-  useUserStreak,
-} from "@/hooks/leetpush.ts";
-import {
   DailyProblemI,
   UserStatsI,
   UserStreakI,
 } from "@/types/leetpush.interface.ts";
 import { useContext } from "react";
 import { UserContext } from "@/context/userContext.tsx";
+import { useDailyProblem } from "@/hooks/tanstack/queries/useDailyProblem";
+import { useUserStats } from "@/hooks/tanstack/mutations/useUserStats";
+import { useUserStreak } from "@/hooks/tanstack/mutations/useUserStreak";
 
 export default function LeetCode() {
   const { username } = useContext(UserContext);

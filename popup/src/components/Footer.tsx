@@ -3,9 +3,9 @@ import { FaXTwitter, FaLinkedinIn } from "react-icons/fa6";
 export default function Footer() {
   return (
     <footer className="mt-3">
-      <p className="flex items-center justify-center text-center text-xs text-lp-greyer">
+      <p className="text-lp-greyer flex items-center justify-center text-center text-xs">
         &copy; {new Date().getFullYear()}
-        <span className="ml-1 flex items-center font-semibold text-lp-grey">
+        <span className="text-lp-grey ml-1 flex items-center font-semibold">
           Hüsam
           <a
             href="https://twitter.com/husamahmud"
@@ -24,7 +24,7 @@ export default function Footer() {
         </span>
       </p>
 
-      <span className="text-xs font-semibold text-lp-grey">v1.7.3</span>
+      <span className="text-lp-grey text-xs font-semibold">v1.7.3</span>
     </footer>
   );
 }

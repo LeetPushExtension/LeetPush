@@ -52,7 +52,7 @@ export default function InputForm() {
           type="text"
           name="username"
           defaultValue={username}
-          className="border-b border-lp-greyer bg-transparent text-stone-100 placeholder:text-stone-500"
+          className="border-lp-greyer border-b bg-transparent text-stone-100 placeholder:text-stone-500"
           placeholder="LeetCode username"
         />
         <Button

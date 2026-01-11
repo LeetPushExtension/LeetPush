@@ -9,7 +9,7 @@ export default function Daily({ data }: { data: DailyProblemI }) {
       <div>
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <p className="text-xs font-medium text-lp-grey">Daily Problem</p>
+            <p className="text-lp-grey text-xs font-medium">Daily Problem</p>
             <a
               target="_blank"
               href={`https://leetcode.com${data.link}`}
@@ -30,7 +30,7 @@ export default function Daily({ data }: { data: DailyProblemI }) {
             {data.question.topicTags.map((tag) => (
               <Badge
                 key={tag.name}
-                className="rounded-lg bg-lp-greyer font-normal text-lp-grey hover:bg-lp-greyer"
+                className="bg-lp-greyer text-lp-grey hover:bg-lp-greyer rounded-lg font-normal"
               >
                 {tag.name}
               </Badge>

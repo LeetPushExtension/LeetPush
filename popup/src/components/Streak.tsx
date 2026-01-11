@@ -39,20 +39,10 @@ export default function Streak({ data }: { data: UserStreakI }) {
                 />
               ))}
             </div>
-            <p className="text-center text-lp-grey">{entry.month}</p>
+            <p className="text-lp-grey text-center">{entry.month}</p>
           </div>
         ))}
       </div>
     </div>
   );
 }
-
-//res.map(entry => {
-//   console.log(entry.month)
-//
-//   entry.days.map(dayEntry => {
-//     console.log(dayEntry)
-//   })
-//
-//   console.log('---')
-// })
