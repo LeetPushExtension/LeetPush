@@ -301,7 +301,17 @@
 
       if (!solution) {
         const codeElement = document.querySelector(SELECTORS.codeBlock)
-        solution = codeElement?.textContent || ""
+        lines = codeElement?.children
+        const code = Array.from(lines).map(line => {
+          // 2. Get all child nodes of the line, but skip the first one (the line number)
+          // convert children to an array and slice from index 1 to the end
+          const codeParts = Array.from(line.childNodes).slice(1);
+
+          // 3. Join the remaining parts back together
+          return codeParts.map(part => part.textContent).join('');
+        }).join('').replace(/\u00A0/g, ' ');
+
+        solution = code || ""
       } else {
         solution = solution.replace(/\\n/g, "\n").replace(/ {2}/g, "  ").replace(/"/g, "")
       }
