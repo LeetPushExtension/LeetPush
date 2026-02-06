@@ -25,7 +25,10 @@ export const fetchDailyProblem = async (): Promise<DailyProblemI> => {
  * @returns The user stats
  **/
 export const fetchUserStats = async (username: string): Promise<UserStatsI> => {
-  const response = await fetch(`${BASE_URL}/${username}`);
+  const normalizedUsername = username.trim();
+  const response = await fetch(
+    `${BASE_URL}/${encodeURIComponent(normalizedUsername)}`,
+  );
   if (response.status === 404) throw new Error("User not found");
   else if (!response.ok) throw new Error("Failed to fetch user stats");
 
@@ -40,7 +43,11 @@ export const fetchUserStats = async (username: string): Promise<UserStatsI> => {
 export const fetchUserStreak = async (
   username: string,
 ): Promise<UserStreakI> => {
-  const response = await fetch(`${BASE_URL}/userProfileCalendar/${username}`);
+  const normalizedUsername = username.trim();
+  const response = await fetch(
+    `${BASE_URL}/userProfileCalendar/${encodeURIComponent(normalizedUsername)}`,
+  );
+  if (response.status === 404) throw new Error("User not found");
   if (!response.ok) throw new Error("Failed to fetch user streak");
 
   return await response.json();
