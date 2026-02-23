@@ -653,15 +653,38 @@
       }
     } catch (error) {
       console.error("Failed to push solution:", error)
-      showError(error.message || "Unknown error occurred while pushing solution")
 
-      pushBtn.classList.remove("loading")
-      pushBtn.classList.add("error")
-      pushBtn.textContent = "Error"
-      await sleep(2000)
-      pushBtn.disabled = false
-      pushBtn.classList.remove("error")
-      pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
+      // Check if it's an authentication error (401)
+      const errorMessage = error.message || ""
+      const isAuthError = errorMessage.includes("401") ||
+                         errorMessage.includes("Authentication failed") ||
+                         errorMessage.includes("invalid or expired")
+
+      if (isAuthError) {
+        // Clear the invalid token
+        localStorage.removeItem("token")
+        localStorage.removeItem("branch")
+
+        showError("Authentication failed. Your GitHub token is invalid or expired. Please enter a new token.")
+
+        // Reset button state first
+        pushBtn.classList.remove("loading")
+        pushBtn.disabled = false
+        pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
+
+        // Show config modal to let user update credentials
+        showConfigModal()
+      } else {
+        showError(errorMessage || "Unknown error occurred while pushing solution")
+
+        pushBtn.classList.remove("loading")
+        pushBtn.classList.add("error")
+        pushBtn.textContent = "Error"
+        await sleep(2000)
+        pushBtn.disabled = false
+        pushBtn.classList.remove("error")
+        pushBtn.textContent = `Push (${SHORTCUT_DISPLAY})`
+      }
     }
   }
 
